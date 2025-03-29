@@ -17,10 +17,9 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         return [
-            'project_name' => fake()->word(),
-            'project_description' => fake()->sentence(),
-            'project_start_date' => fake()->date(),
-            'project_end_date' => fake()->date(),
+            'project_name' => $this->faker->sentence(3),
+            'description' => $this->faker->paragraph(3),
+            'start_date' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];
     }
 }

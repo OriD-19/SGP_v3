@@ -17,7 +17,10 @@ class SprintFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'duration' => $this->faker->numberBetween(1, 4),
+            'description' => $this->faker->sentence(10),
+            'start_date' => $this->faker->dateTimeBetween('-1 month', 'now'),
+            'active' => $this->faker->boolean(),
         ];
     }
 }

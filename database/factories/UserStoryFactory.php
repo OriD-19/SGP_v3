@@ -17,7 +17,9 @@ class UserStoryFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'title' => $this->faker->sentence(),
+            'description' => $this->faker->paragraph(),
+            'due_date' => $this->faker->dateTimeBetween('now', '+1 month'),
         ];
     }
 }
