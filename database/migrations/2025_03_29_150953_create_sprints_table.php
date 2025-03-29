@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('sprints', function (Blueprint $table) {
             $table->id();
+            $table->integer('duration');
+            $table->string("description");
+            $table->datetime('start_date');
+            $table->boolean('active')->default(false);
+
             $table->timestamps();
         });
     }
