@@ -10,6 +10,17 @@ class Project extends Model
     /** @use HasFactory<\Database\Factories\ProjectFactory> */
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'project_name',
+        'description',
+        'start_date',
+    ];
+
     public function sprints()
     {
         return $this->hasMany(Task::class);

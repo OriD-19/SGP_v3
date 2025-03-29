@@ -10,6 +10,17 @@ class Task extends Model
     /** @use HasFactory<\Database\Factories\TaskFactory> */
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'title',
+        'description',
+        'due_date',
+    ];
+
     public function priority()
     {
         return $this->belongsTo(Priority::class);

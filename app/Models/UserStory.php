@@ -10,6 +10,17 @@ class UserStory extends Model
     /** @use HasFactory<\Database\Factories\UserStoryFactory> */
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'title',
+        'description',
+        'due_date',
+    ];
+
     public function sprint()
     {
         return $this->belongsTo(Sprint::class);
