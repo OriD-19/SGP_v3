@@ -9,4 +9,14 @@ class Task extends Model
 {
     /** @use HasFactory<\Database\Factories\TaskFactory> */
     use HasFactory;
+
+    public function priority()
+    {
+        return $this->belongsTo(Priority::class);
+    }
+
+    public function team_members() 
+    {
+        return $this->belongsToMany(User::class, 'task_user');
+    }
 }

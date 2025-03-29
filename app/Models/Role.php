@@ -9,4 +9,9 @@ class Role extends Model
 {
     /** @use HasFactory<\Database\Factories\RoleFactory> */
     use HasFactory;
+
+    public function team_members()
+    {
+        return $this->hasMany(User::class);
+    }
 }

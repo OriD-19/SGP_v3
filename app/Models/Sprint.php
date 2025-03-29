@@ -9,4 +9,9 @@ class Sprint extends Model
 {
     /** @use HasFactory<\Database\Factories\SprintFactory> */
     use HasFactory;
+
+    public function user_stories()
+    {
+        return $this->hasMany(Task::class);
+    }
 }

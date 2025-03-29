@@ -9,4 +9,9 @@ class Priority extends Model
 {
     /** @use HasFactory<\Database\Factories\PriorityFactory> */
     use HasFactory;
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
 }
