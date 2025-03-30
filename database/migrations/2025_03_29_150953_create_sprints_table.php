@@ -18,6 +18,7 @@ return new class extends Migration
             $table->datetime('start_date');
             $table->boolean('active')->default(false);
 
+            $table->foreignId('project_id')->nullable()->constrained('projects')->onDelete('cascade');
             $table->timestamps();
         });
     }
