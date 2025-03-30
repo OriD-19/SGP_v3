@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Organization;
 use App\Models\Priority;
 use App\Models\Role;
 use App\Models\Status;
@@ -36,7 +37,7 @@ class DatabaseSeeder extends Seeder
             'role' => 'team_member',
         ]);
 
-        Role::factory()->create([
+        $admin = Role::factory()->create([
             'role' => 'admin',
         ]);
 
@@ -76,5 +77,21 @@ class DatabaseSeeder extends Seeder
             'status' => 'to_do',
         ]);
 
+        $user = User::factory()->create([
+            'first_name' => 'Admin',
+            'last_name' => 'Admin',
+            'email' => 'adminorg@org.com',
+            'password' => bcrypt('admin123'), // encrypt test password
+        ]);
+
+        $user->roles()->attach($admin); // admin of the organization
+
+        $mainOrg = Organization::factory()->create([
+            'name' => 'Test Organization',
+            'description' => 'Test Description',
+            'email' => 'org@org.com',
+        ]);
+
+        $user->organization()->associate($mainOrg); // attach the admin to the organization
     }
 }

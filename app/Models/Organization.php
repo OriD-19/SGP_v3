@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Project extends Model
+class Organization extends Model
 {
-    /** @use HasFactory<\Database\Factories\ProjectFactory> */
+    /** @use HasFactory<\Database\Factories\OrganizationFactory> */
     use HasFactory;
 
     /**
@@ -16,18 +16,19 @@ class Project extends Model
      * @var array
      */
     protected $fillable = [
-        'project_name',
+        'name',
         'description',
-        'start_date',
+        'email',
     ];
 
-    public function sprints()
+    public function users()
     {
-        return $this->hasMany(Sprint::class);
+        return $this->hasMany(User::class);
     }
 
-    public function organization()
+    public function projects()
     {
-        return $this->belongsTo(Organization::class);
+        return $this->hasMany(Project::class);
     }
+
 }
