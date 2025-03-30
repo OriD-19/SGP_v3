@@ -19,12 +19,6 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'first_name' => 'Test User',
-            'last_name' => 'Test Last Name',
-            'email' => 'test@example.com',
-        ]);
-
         Role::factory()->create([
             'role' => 'scrum_master',
         ]);
@@ -77,21 +71,17 @@ class DatabaseSeeder extends Seeder
             'status' => 'to_do',
         ]);
 
-        $user = User::factory()->create([
-            'first_name' => 'Admin',
-            'last_name' => 'Admin',
-            'email' => 'adminorg@org.com',
-            'password' => bcrypt('admin123'), // encrypt test password
-        ]);
-
-        $user->roles()->attach($admin); // admin of the organization
-
         $mainOrg = Organization::factory()->create([
             'name' => 'Test Organization',
             'description' => 'Test Description',
             'email' => 'org@org.com',
         ]);
 
-        $user->organization()->associate($mainOrg); // attach the admin to the organization
+        $user = User::factory()->for($mainOrg)->create([
+            'first_name' => 'Admin',
+            'last_name' => 'Admin',
+            'email' => 'adminorg@org.com',
+            'password' => bcrypt('admin123'), // encrypt test password
+        ]);
     }
 }
