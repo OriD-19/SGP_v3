@@ -23,7 +23,7 @@ class Role extends Model
 
     public function team_members()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(TeamMember::class);
     }
 
     public function permissions()
