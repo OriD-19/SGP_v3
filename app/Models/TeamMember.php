@@ -10,6 +10,13 @@ class TeamMember extends Model
     /** @use HasFactory<\Database\Factories\TeamMemberFactory> */
     use HasFactory;
 
+
+    protected $fillable = [
+        'user_id',
+        'project_id',
+        'role_id',
+    ];
+
     public function project()
     {
         return $this->belongsTo(Project::class);
