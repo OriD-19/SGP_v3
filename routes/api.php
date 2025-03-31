@@ -1,0 +1,34 @@
+<?php
+
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
+
+Route::group(['prefix' => 'SGP/v1'], function () {
+    // Rutas públicas
+    Route::post('register', [UserController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login']);
+
+    // Rutas protegidas **
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('organizations', function () {
+            return response()->json(['message' => 'Organizations accessed successfully'], 200);
+        });
+
+        Route::get('projects', function () {
+            return response()->json(['message' => 'Projects accessed successfully'], 200);
+        });
+
+        Route::get('sprints', function () {
+            return response()->json(['message' => 'Sprints accessed successfully'], 200);
+        });
+
+        Route::get('user-stories', function () {
+            return response()->json(['message' => 'User stories accessed successfully'], 200);
+        });
+
+        Route::get('tasks', function () {
+            return response()->json(['message' => 'Tasks accessed successfully'], 200);
+        });
+    });
+});
