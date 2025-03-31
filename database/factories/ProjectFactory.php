@@ -1,7 +1,8 @@
 <?php
 
 namespace Database\Factories;
-
+use App\Models\Organization;
+use App\Models\Status;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +20,8 @@ class ProjectFactory extends Factory
         return [
             'project_name' => $this->faker->sentence(3),
             'description' => $this->faker->paragraph(3),
-            'start_date' => $this->faker->dateTimeBetween('-1 year', 'now'),
+            'organization_id' => Organization::factory(),
+            'status_id' => Status::factory(),
         ];
     }
 }
