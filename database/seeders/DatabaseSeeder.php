@@ -82,6 +82,7 @@ class DatabaseSeeder extends Seeder
             'last_name' => 'Admin',
             'email' => 'adminorg@org.com',
             'password' => bcrypt('admin123'), // encrypt test password
+            'is_admin' => true,
         ]);
     }
 }
