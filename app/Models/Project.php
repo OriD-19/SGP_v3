@@ -18,9 +18,10 @@ class Project extends Model
     protected $fillable = [
         'project_name',
         'description',
-        'start_date',
+        'organization_id',
+        'status_id',
     ];
-
+ 
     public function sprints()
     {
         return $this->hasMany(Sprint::class);

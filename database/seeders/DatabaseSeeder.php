@@ -1,12 +1,15 @@
 <?php
 
 namespace Database\Seeders;
-
+use App\Models\Project;
 use App\Models\Organization;
 use App\Models\Priority;
 use App\Models\Role;
 use App\Models\Status;
 use App\Models\User;
+use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\DB;
+
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -19,6 +22,27 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
+        //create permissions
+        $permissions =[
+            'Create projects',
+            'Edit projects',
+            'Delete projects',
+            'Assign team members in project',
+            'Assign roles in project',
+            'Edit team member in project',
+            'Edit roles in project',         
+        ];
+
+        foreach ($permissions as $permiso){
+            Permission::firstOrCreate(['name' => $permiso]);
+        }
+
+        //create roles
+
+        $adminrole = Role::factory()->create([
+            'role' => 'administrator',
+        ]);
+
         Role::factory()->create([
             'role' => 'scrum_master',
         ]);
@@ -29,10 +53,6 @@ class DatabaseSeeder extends Seeder
 
         Role::factory()->create([
             'role' => 'team_member',
-        ]);
-
-        $admin = Role::factory()->create([
-            'role' => 'admin',
         ]);
 
         Priority::factory()->create([
@@ -82,6 +102,29 @@ class DatabaseSeeder extends Seeder
             'last_name' => 'Admin',
             'email' => 'adminorg@org.com',
             'password' => bcrypt('admin123'), // encrypt test password
+        ]);
+
+
+        $project = Project::factory()->create([
+            'project_name' => 'Propi',
+            'description' => 'Proyecto de propi',
+            'organization_id' => 1,
+            'status_id' =>1,
+        ]);
+
+
+        //asignar permisos
+        foreach ($permissions as $nombre_permiso){
+            $permission = Permission::where('name', $nombre_permiso) -> first();
+            if($permission){
+                $adminrole -> permissions() -> attach($permission);
+            }
+        }
+
+        DB::table('team_members')->insert([
+            'user_id' => $user->id,
+            'role_id' => $adminrole->id,
+            'project_id' => $project->id,
         ]);
     }
 }
