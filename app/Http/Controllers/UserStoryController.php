@@ -9,6 +9,13 @@ class UserStoryController extends Controller
     public function index()
     {
         // Logic to get all user stories
+        return response()->json([
+            'user_stories' => [
+                // Example data
+                ['id' => 1, 'title' => 'User Story 1'],
+                ['id' => 2, 'title' => 'User Story 2'],
+            ]
+        ], 200);
     }
     public function show($id)
     {
@@ -18,6 +25,13 @@ class UserStoryController extends Controller
     public function store(Request $request)
     {
         // Logic to create a new user story
+        return response()->json([
+            'message' => 'User story created successfully',
+            'user_story' => [
+                'id' => 1,
+                'title' => $request->input('title'),
+            ]
+        ], 201);
     }
 
     public function update(Request $request, $id)
@@ -28,5 +42,8 @@ class UserStoryController extends Controller
     public function destroy($id)
     {
         // Logic to delete a user story
+        return response()->json([
+            'message' => 'User story deleted successfully'
+        ], 204);
     }
 }

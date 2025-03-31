@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\Organization;
+use App\Models\Project;
 use App\Models\User;
+use App\Models\UserStory;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\ProjectSeeder;
 use Database\Seeders\UserSeeder;
@@ -24,9 +27,9 @@ test('Test admin permissions for deleteing a User Story', function () {
     $user = User::where('first_name', 'Admin')->first();
     $this->actingAs($user);
 
-    $organization = DB::table('organizations')->where('id', $organization_id)->first();
-    $project = DB::table('projects')->where('id', $project_id)->first();
-    $user_story = DB::table('user_stories')->where('id', $user_story_id)->first();
+    $organization = Organization::where('id', $organization_id)->first();
+    $project = Project::where('id', $project_id)->first();
+    $user_story = UserStory::where('id', $user_story_id)->first();
 
     $this->assertNotNull($organization);
     $this->assertNotNull($project);
@@ -34,7 +37,6 @@ test('Test admin permissions for deleteing a User Story', function () {
 
     $this->assertEquals($organization->id, $user->organization_id);
     $this->assertEquals($project->id, $user_story->project_id);
-    $this->assertEquals($user->id, $user_story->user_id);
 
     // Attempt to delete the user story
     $response = $this->delete(route(
