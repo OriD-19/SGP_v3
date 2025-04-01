@@ -2,13 +2,10 @@
 
 use App\Models\Organization;
 use App\Models\Project;
-use App\Models\Role;
-use App\Models\TeamMember;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
-
 
 test('create an user successfully', function () {
     $organization = Organization::factory()->create(); //El usuario tiene como obligatorio un ID de Organization
@@ -16,7 +13,7 @@ test('create an user successfully', function () {
         'organization_id' => $organization->id, //por eso le pongo este desde aqui. Aunque, creo que se puede definir en el model idk
     ]);
 
-    $response = $this->postJson('api/SGP/v1/register', [
+    $response = $this->postJson('/api/SGP/v1/register', [
         'first_name' => $user->first_name,
         'last_name' => $user->last_name,
         'email' => $user->email,
@@ -57,19 +54,9 @@ test('log out successfully', function () {
         'organization_id' => $organization->id,
     ]);
 
-    //primero creo un login (incluye el token que se crea al usuario)
-    $loginResponse = $this->postJson('api/SGP/v1/login', [
-        'email' => $user->email,
-        'password' => 'password',
-    ]);
-
-    $loginResponse->assertStatus(200);
-    $token = $loginResponse->json('token');
-
+    $this->actingAs($user);
     // the actual logout
-    $logoutResponse = $this->postJson('api/SGP/v1/logout', [], [
-        'Authorization' => "Bearer $token",
-    ]);
+    $logoutResponse = $this->postJson('api/SGP/v1/logout', []);
 
     $logoutResponse->assertStatus(200)
         ->assertJson(['message' => 'Logged out successfully']);
@@ -90,31 +77,12 @@ test('admin user can access protected resources', function () {
         'organization_id' => $organization->id,
     ]);
 
-    //crear el rol
-    $adminRole = Role::factory()->create([
-        'role' => 'admin',
-    ]);
-
     $admin = User::factory()->create([
+        'is_admin' => true,
         'organization_id' => $organization->id,
     ]);
 
-    //primero asociar con teamMember ya que el rol se incluye dentro de un TeamMember no directamente al user
-    $teamMember = TeamMember::factory()->create([
-        'user_id' => $admin->id,
-        'role_id' => $adminRole->id,
-        'project_id' => $project->id,
-    ]);
-
-    //inicio de sesion con el token
-    $loginResponse = $this->postJson('api/SGP/v1/login', [
-        'email' => $admin->email,
-        'password' => 'password',
-    ]);
-
-    $loginResponse->assertStatus(200);
-    $token = $loginResponse->json('token');
-
+    $this->actingAs($admin);
     // rutas a las que tiene acceso
     $protectedRoutes = [
         'api/SGP/v1/organizations',
@@ -126,9 +94,7 @@ test('admin user can access protected resources', function () {
 
     //por cada ruta probarlo
     foreach ($protectedRoutes as $route) {
-        $response = $this->getJson($route, [
-            'Authorization' => "Bearer $token",
-        ]);
+        $response = $this->getJson($route);
 
         $response->assertStatus(200);
     }

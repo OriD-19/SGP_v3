@@ -9,7 +9,7 @@ test('Admin can delete a task associated with a User Story', function () {
     $admin = User::where('first_name', 'Admin')->first();
     $this->actingAs($admin);
 
-    $response = $this->delete(route('organizations.projects.user_stories.tasks.destroy', [
+    $response = $this->deleteJson(route('organizations.projects.user_stories.tasks.destroy', [
         'organization' => 1,
         'project' => 1,
         'user_story' => 1,
@@ -26,7 +26,7 @@ test('Admin cannot delete a task associated with a User Story with invalid ID', 
     $admin = User::where('first_name', 'Admin')->first();
     $this->actingAs($admin);
 
-    $response = $this->delete(route('organizations.projects.user_stories.tasks.destroy', [
+    $response = $this->deleteJson(route('organizations.projects.user_stories.tasks.destroy', [
         'organization' => 1,
         'project' => 1,
         'user_story' => 1,

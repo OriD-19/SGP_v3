@@ -19,7 +19,7 @@ test('Admin user can create Task associated with a User Story', function () {
     $user = User::where('first_name', 'Admin')->first();
     $this->actingAs($user);
 
-    $response = $this->post(route('organizations.projects.user_stories.tasks.store', [
+    $response = $this->postJson(route('organizations.projects.user_stories.tasks.store', [
         "organization" => $organization_id,
         "project" => $project_id,
         "user_story" => $user_story_id,
@@ -67,7 +67,7 @@ test('Admin user cannot create Task with invalid User Story ID', function () {
     $user = User::where('first_name', 'Admin')->first();
     $this->actingAs($user);
 
-    $response = $this->post(route('organizations.projects.user_stories.tasks.store', [
+    $response = $this->postJson(route('organizations.projects.user_stories.tasks.store', [
         "organization" => $organization_id,
         "project" => $project_id,
         "user_story" => $user_story_id,
@@ -91,7 +91,7 @@ test('Admin user cannot create Task with missing required fields', function () {
     $user = User::where('first_name', 'Admin')->first();
     $this->actingAs($user);
 
-    $response = $this->post(route('organizations.projects.user_stories.tasks.store', [
+    $response = $this->postJson(route('organizations.projects.user_stories.tasks.store', [
         "organization" => $organization_id,
         "project" => $project_id,
         "user_story" => $user_story_id,

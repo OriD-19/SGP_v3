@@ -36,7 +36,7 @@ test('Test admin permissions for deleteing a User Story', function () {
     $this->assertEquals($project->id, $user_story->project_id);
 
     // Attempt to delete the user story
-    $response = $this->delete(route(
+    $response = $this->deleteJson(route(
         'organizations.projects.user_stories.destroy',
         [
             'organization' => $organization_id,
@@ -66,7 +66,7 @@ test('Test admin permissions for deleting a User Story with invalid ID', functio
     $this->actingAs($user);
 
     // Attempt to delete the user story
-    $response = $this->delete(route(
+    $response = $this->deleteJson(route(
         'organizations.projects.user_stories.destroy',
         [
             'organization' => $organization_id,

@@ -10,7 +10,7 @@ test('Admin can edit Tasks associated to a User Story (PUT)', function () {
     $admin = User::where('first_name', 'Admin')->first();
     $this->actingAs($admin);
 
-    $response = $this->put(route('organizations.projects.user_stories.tasks.update', [
+    $response = $this->putJson(route('organizations.projects.user_stories.tasks.update', [
         'organization' => 1,
         'project' => 1,
         'user_story' => 1,
@@ -59,7 +59,7 @@ test('Admin can edit Tasks associated to a User Story (PATCH)', function () {
     $admin = User::where('first_name', 'Admin')->first();
     $this->actingAs($admin);
 
-    $response = $this->patch(route('organizations.projects.user_stories.tasks.update', [
+    $response = $this->patchJson(route('organizations.projects.user_stories.tasks.update', [
         'organization' => 1,
         'project' => 1,
         'user_story' => 1,
