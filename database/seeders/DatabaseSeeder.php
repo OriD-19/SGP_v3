@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Seeders;
+
 use App\Models\Project;
 use App\Models\Organization;
 use App\Models\Priority;
@@ -25,7 +26,7 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         //create permissions
-        $permissions =[
+        $permissions = [
             'Create projects',
             'Create sprints',
             'Create user_stories',
@@ -37,10 +38,10 @@ class DatabaseSeeder extends Seeder
             'Assign team members in project',
             'Assign roles in project',
             'Edit team member in project',
-            'Edit roles in project',         
+            'Edit roles in project',
         ];
 
-        foreach ($permissions as $permiso){
+        foreach ($permissions as $permiso) {
             Permission::firstOrCreate(['name' => $permiso]);
         }
 
@@ -120,7 +121,7 @@ class DatabaseSeeder extends Seeder
             'project_name' => 'Propi',
             'description' => 'Proyecto de propi',
             'organization_id' => 1,
-            'status_id' =>1,
+            'status_id' => 1,
         ]);
 
         $sprint = Sprint::factory()->create([
@@ -133,10 +134,10 @@ class DatabaseSeeder extends Seeder
 
 
         //asignar permisos
-        foreach ($permissions as $nombre_permiso){
-            $permission = Permission::where('name', $nombre_permiso) -> first();
-            if($permission){
-                $adminrole -> permissions() -> attach($permission);
+        foreach ($permissions as $nombre_permiso) {
+            $permission = Permission::where('name', $nombre_permiso)->first();
+            if ($permission) {
+                $adminrole->permissions()->attach($permission);
             }
         }
 
