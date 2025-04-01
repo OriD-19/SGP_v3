@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Models\Sprint;
 use App\Models\TeamMember;
 use App\Models\User;
+use App\Models\UserStory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
