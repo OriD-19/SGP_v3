@@ -118,10 +118,10 @@ test('admin user can access protected resources', function () {
     // rutas a las que tiene acceso
     $protectedRoutes = [
         'api/SGP/v1/organizations',
-        'api/SGP/v1/projects',
-        'api/SGP/v1/sprints',
-        'api/SGP/v1/user-stories',
-        'api/SGP/v1/tasks',
+        'api/SGP/v1/organizations/1/projects',
+        'api/SGP/v1/organizations/1/sprints',
+        'api/SGP/v1/organizations/1/projects/1/user-stories',
+        'api/SGP/v1/organizations/1/projects/1/user-stories/1/tasks',
     ];
 
     //por cada ruta probarlo

@@ -11,7 +11,7 @@ use App\Models\UserStory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class PermissionAdminTest extends TestCase{
+class PermissionAdminTest extends TestCase {
     use RefreshDatabase;
 
     public function test_administrator_can_create_sprints()
@@ -20,7 +20,7 @@ class PermissionAdminTest extends TestCase{
         $sprint = Sprint::factory()->make();
 
         $this->actingAs($admin)
-            ->post(route('sprints.store'), $sprint->toArray())
+            ->post(route('organizations.projects.sprints.store'), $sprint->toArray())
             ->assertStatus(201);
     }
 
@@ -35,7 +35,7 @@ class PermissionAdminTest extends TestCase{
         ];
 
         $this->actingAs($admin)
-            ->put(route('sprints.update', $sprint->id), $updatedData)
+            ->put(route('organizations.projects.sprints.update', $sprint->id), $updatedData)
             ->assertStatus(200);
 
         $sprint->refresh();
@@ -49,7 +49,7 @@ class PermissionAdminTest extends TestCase{
         $sprint = Sprint::factory()->create();
 
         $this->actingAs($admin)
-            ->delete(route('sprints.destroy', $sprint->id))
+            ->delete(route('organizations.projects.sprints.destroy', $sprint->id))
             ->assertStatus(200);
 
         $this->assertDatabaseMissing('sprints', [
@@ -64,7 +64,7 @@ class PermissionAdminTest extends TestCase{
         $userStory = UserStory::factory()->make();
 
         $this->actingAs($admin)
-            ->post(route('user_stories.store'), $userStory->toArray())
+            ->post(route('organizations.projects.user_stories.store'), $userStory->toArray())
             ->assertStatus(201);
     }
 
@@ -81,7 +81,7 @@ class PermissionAdminTest extends TestCase{
         ];
 
         $this->actingAs($admin)
-            ->put(route('user_stories.update', $userStory->id), $updatedData)
+            ->put(route('organizations.projects.user_stories.update', $userStory->id), $updatedData)
             ->assertStatus(200);
 
         $userStory->refresh();
