@@ -7,20 +7,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-<<<<<<< HEAD
-=======
 use Spatie\Permission\Traits\HasRoles;
 
->>>>>>> a738984 (seeding completed)
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-<<<<<<< HEAD
-    use HasFactory, Notifiable, HasApiTokens;
-=======
     use HasFactory, HasApiTokens,Notifiable, HasRoles;
->>>>>>> a738984 (seeding completed)
 
     /**
      * The attributes that are mass assignable.
