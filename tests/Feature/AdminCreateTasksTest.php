@@ -7,7 +7,7 @@ use Database\Seeders\UserStorySeeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-//uses(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 test('Admin user can create Task associated with a User Story', function () {
 
@@ -15,9 +15,6 @@ test('Admin user can create Task associated with a User Story', function () {
     $project_id = 1;
     $user_story_id = 1;
     $organization_id = 1;
-
-    // Populate the database with test data
-    //$this->seed();
 
     $user = User::where('first_name', 'Admin')->first();
     $this->actingAs($user);
@@ -66,9 +63,6 @@ test('Admin user cannot create Task with invalid User Story ID', function () {
     $project_id = 1;
     $user_story_id = 999; // Invalid User Story ID
     $organization_id = 1;
-
-    // Populate the database with test data
-    //$this->seed();
 
     $user = User::where('first_name', 'Admin')->first();
     $this->actingAs($user);

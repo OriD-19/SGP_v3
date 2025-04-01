@@ -11,7 +11,7 @@ use Database\Seeders\UserStorySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
-//uses(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 test('Test admin permissions for deleteing a User Story', function () {
 
@@ -19,9 +19,6 @@ test('Test admin permissions for deleteing a User Story', function () {
     $project_id = 1;
     $user_story_id = 1;
     $organization_id = 1;
-
-    // populate the database with test data
-    //$this->seed();
 
     // Login as the admin user
     $user = User::where('first_name', 'Admin')->first();
@@ -63,9 +60,6 @@ test('Test admin permissions for deleting a User Story with invalid ID', functio
     $project_id = 1;
     $user_story_id = 999; // Invalid user story ID
     $organization_id = 1;
-
-    // populate the database with test data
-    //$this->seed();
 
     // Login as the admin user
     $user = User::where('first_name', 'Admin')->first();

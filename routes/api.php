@@ -3,6 +3,7 @@
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SprintController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserStoryController;
@@ -17,4 +18,6 @@ Route::group(['prefix' => 'v1'], function () {
     Route::apiResource('organizations.projects.user_stories', UserStoryController::class);
 
     Route::apiResource('organizations.projects.user_stories.tasks', TaskController::class);
+
+    Route::apiResource('organizations.projects.sprints', SprintController::class);
 });
