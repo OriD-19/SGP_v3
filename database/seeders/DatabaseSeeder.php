@@ -23,8 +23,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
         //create permissions
         $permissions = [
             'Create projects',
@@ -35,10 +33,12 @@ class DatabaseSeeder extends Seeder
             'Edit user_stories',
             'Delete projects',
             'Delete sprints',
+            'Delete user_stories',
             'Assign team members in project',
             'Assign roles in project',
             'Edit team member in project',
             'Edit roles in project',
+            'Assign tasks to a team member',
         ];
 
         foreach ($permissions as $permiso) {
@@ -47,11 +47,11 @@ class DatabaseSeeder extends Seeder
 
         //create roles
 
-        $adminrole = Role::factory()->create([
+        $adminrole = Role::create([
             'role' => 'administrator',
         ]);
 
-        Role::factory()->create([
+        Role::create([
             'role' => 'scrum_master',
         ]);
 
@@ -63,7 +63,7 @@ class DatabaseSeeder extends Seeder
             'role' => 'team_member',
         ]);
 
-        Priority::factory()->create([
+        Priority::create([
             'priority' => 'low',
         ]);
 
@@ -117,14 +117,14 @@ class DatabaseSeeder extends Seeder
         ]);
 
 
-        $project = Project::factory()->create([
+        $project = Project::create([
             'project_name' => 'Propi',
             'description' => 'Proyecto de propi',
             'organization_id' => 1,
             'status_id' => 1,
         ]);
 
-        $sprint = Sprint::factory()->create([
+        $sprint = Sprint::create([
             'duration' => 2,
             'description' => 'Proyecto de propi',
             'start_date' => now(),

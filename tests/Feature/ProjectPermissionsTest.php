@@ -9,10 +9,8 @@ use App\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class ProjectPermissionsTest extends TestCase{
-    use RefreshDatabase;
-
-
+class ProjectPermissionsTest extends TestCase
+{
     public function test_administrator_can_create_projects()
     {
         $admin = $this->createAdminUser();
@@ -84,7 +82,7 @@ class ProjectPermissionsTest extends TestCase{
             'last_name' => 'Admin',
             'email' => 'adminorg@org.com',
             'password' => bcrypt('password'),
-            'organization_id'=>$organization->id
+            'organization_id' => $organization->id
         ]);
 
         $role = Role::where('role', 'administrator')->first();
@@ -93,15 +91,14 @@ class ProjectPermissionsTest extends TestCase{
             $role = Role::create(['role' => 'administrator']);
         }
 
-
         $project = Project::factory()->create();
         TeamMember::create([
             'user_id' => $user->id,
             'project_id' => $project->id,
             'role_id' => $role->id,
         ]);
+
+        $user->assignRole($role->role);
         return $user;
     }
-
-
 }

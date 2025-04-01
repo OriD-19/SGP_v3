@@ -40,4 +40,16 @@ class TaskController extends Controller
             'message' => 'Task deleted successfully'
         ], 204);
     }
+
+    public function assignUser(Request $request, $taskId, $userId)
+    {
+        // Logic to assign a user to a task
+        return response()->json([
+            'message' => 'User assigned to task successfully',
+            'task' => [
+                'id' => $taskId,
+                'assigned_user_id' => $userId,
+            ]
+        ], 200);
+    }
 }
