@@ -5,6 +5,7 @@ use App\Models\Project;
 use App\Models\Organization;
 use App\Models\Priority;
 use App\Models\Role;
+use App\Models\Sprint;
 use App\Models\Status;
 use App\Models\User;
 use Spatie\Permission\Models\Permission;
@@ -26,8 +27,13 @@ class DatabaseSeeder extends Seeder
         //create permissions
         $permissions =[
             'Create projects',
+            'Create sprints',
+            'Create user_stories',
             'Edit projects',
+            'Edit sprints',
+            'Edit user_stories',
             'Delete projects',
+            'Delete sprints',
             'Assign team members in project',
             'Assign roles in project',
             'Edit team member in project',
@@ -115,6 +121,14 @@ class DatabaseSeeder extends Seeder
             'description' => 'Proyecto de propi',
             'organization_id' => 1,
             'status_id' =>1,
+        ]);
+
+        $sprint = Sprint::factory()->create([
+            'duration' => 2,
+            'description' => 'Proyecto de propi',
+            'start_date' => now(),
+            'active' => false,
+            'project_id' => 1,
         ]);
 
 
