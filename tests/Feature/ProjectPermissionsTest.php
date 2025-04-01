@@ -19,7 +19,10 @@ class ProjectPermissionsTest extends TestCase{
         $project = Project::factory()->make();
 
         $this->actingAs($admin)
-            ->post(route('organizations.projects.store'), $project->toArray())
+            ->postJson(route('organizations.projects.store', [
+                'organization' => 1,
+                'project' => 1,
+            ]), $project->toArray())
             ->assertStatus(201);
     }
 
@@ -34,7 +37,10 @@ class ProjectPermissionsTest extends TestCase{
         ];
 
         $this->actingAs($admin)
-            ->put(route('organizations.projects.update', $project->id), $updatedData)
+            ->putJson(route('organizations.projects.update', [
+                'organization' => 1,
+                'project' => $project->id,
+            ]), $updatedData)
             ->assertStatus(200);
         $project->refresh();
         $this->assertEquals('Updated Project Name', $project->name);
@@ -46,7 +52,10 @@ class ProjectPermissionsTest extends TestCase{
         $admin = $this->createAdminUser();
         $project = Project::factory()->create();
         $this->actingAs($admin)
-            ->delete(route('organizations.projects.destroy', $project->id))
+            ->deleteJson(route('organizations.projects.destroy', [
+                'organization' => 1,
+                'project' => $project->id,
+            ]))
             ->assertStatus(200);
 
         $this->assertDatabaseMissing('projects', [

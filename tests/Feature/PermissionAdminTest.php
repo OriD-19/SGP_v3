@@ -20,7 +20,10 @@ class PermissionAdminTest extends TestCase {
         $sprint = Sprint::factory()->make();
 
         $this->actingAs($admin)
-            ->post(route('organizations.projects.sprints.store'), $sprint->toArray())
+            ->postJson(route('organizations.projects.sprints.store', [
+                'organization' => 1,
+                'project' => 1,
+            ]), $sprint->toArray())
             ->assertStatus(201);
     }
 
@@ -35,7 +38,11 @@ class PermissionAdminTest extends TestCase {
         ];
 
         $this->actingAs($admin)
-            ->put(route('organizations.projects.sprints.update', $sprint->id), $updatedData)
+            ->putJson(route('organizations.projects.sprints.update', [
+                'organization' => 1,
+                'project' => 1,
+                'sprint' => $sprint->id,
+            ]), $updatedData)
             ->assertStatus(200);
 
         $sprint->refresh();
@@ -49,7 +56,11 @@ class PermissionAdminTest extends TestCase {
         $sprint = Sprint::factory()->create();
 
         $this->actingAs($admin)
-            ->delete(route('organizations.projects.sprints.destroy', $sprint->id))
+            ->deleteJson(route('organizations.projects.sprints.destroy', [
+                'organization' => 1,
+                'project' => 1,
+                'sprint' => $sprint->id,
+            ]))
             ->assertStatus(200);
 
         $this->assertDatabaseMissing('sprints', [
@@ -64,7 +75,10 @@ class PermissionAdminTest extends TestCase {
         $userStory = UserStory::factory()->make();
 
         $this->actingAs($admin)
-            ->post(route('organizations.projects.user_stories.store'), $userStory->toArray())
+            ->postJson(route('organizations.projects.user_stories.store', [
+                'organization' => 1,
+                'project' => 1,
+            ]), $userStory->toArray())
             ->assertStatus(201);
     }
 
@@ -81,7 +95,11 @@ class PermissionAdminTest extends TestCase {
         ];
 
         $this->actingAs($admin)
-            ->put(route('organizations.projects.user_stories.update', $userStory->id), $updatedData)
+            ->putJson(route('organizations.projects.user_stories.update', [
+                'organization' => 1,
+                'project' => 1,
+                'user_story' => $userStory->id,
+            ]), $updatedData)
             ->assertStatus(200);
 
         $userStory->refresh();
