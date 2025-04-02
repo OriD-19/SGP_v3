@@ -25,7 +25,7 @@ class ProjectPolicy
     public function viewAny(User $user)
     {
         $checkRole = TeamMember::where('user_id', $user->id)
-            ->first()
+            ->firstOrFail()
             ->can('Get all projects');
 
         return $checkRole;

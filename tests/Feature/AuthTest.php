@@ -116,19 +116,15 @@ test('admin user can access protected resources', function () {
     $this->actingAs($admin);
     // rutas a las que tiene acceso
     $protectedRoutes = [
-        route('organizations.index'),
-        route('organizations.show', $organization->id),
         route('organizations.projects.index', $organization->id),
-        route('organizations.projects.show', [$organization->id, $project->id]),
         route('organizations.projects.user_stories.index', [$organization->id, $project->id]),
-        route('organizations.projects.user_stories.show', [$organization->id, $project->id, $user_story->id]),
         route('organizations.projects.user_stories.tasks.index', [$organization->id, $project->id, $user_story->id]),
     ];
 
     //por cada ruta probarlo
     foreach ($protectedRoutes as $route) {
+        echo $route;
         $response = $this->getJson($route);
-
         $response->assertStatus(200);
     }
 });

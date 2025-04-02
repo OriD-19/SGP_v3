@@ -119,7 +119,7 @@ test('Admin can edit Tasks associated to a User Story (PATCH)', function () {
 
     $response->assertStatus(200);
     $this->assertDatabaseHas('tasks', [
-        'id' => 1,
+        'id' => $task->id,
         'title' => 'Updated Task Name',
         'description' => 'Updated Task Description',
     ]);
