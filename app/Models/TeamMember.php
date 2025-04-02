@@ -18,6 +18,13 @@ class TeamMember extends Model
         'organization_id',
     ];
 
+    public function getDefaultGuardName()
+    {
+        return 'web';
+    }
+
+    public $guard_name = 'web';
+
     public function project()
     {
         return $this->belongsTo(Project::class);

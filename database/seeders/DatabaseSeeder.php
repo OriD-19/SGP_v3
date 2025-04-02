@@ -28,17 +28,36 @@ class DatabaseSeeder extends Seeder
             'Create projects',
             'Create sprints',
             'Create user_stories',
+            'Create tasks',
+            'Edit tasks',
             'Edit projects',
             'Edit sprints',
             'Edit user_stories',
+            'Edit user_story priority',
+            'Edit user_story sprint',
             'Delete projects',
             'Delete sprints',
             'Delete user_stories',
+            'Delete tasks',
             'Assign team members in project',
             'Assign roles in project',
             'Edit team member in project',
             'Edit roles in project',
             'Assign tasks to a team member',
+            'Get user_stories',
+            'Get team members',
+            'Get roles',
+            'Get tasks',
+            'Get project by id',
+            'Get sprint by id',
+            'Get user_story by id',
+            'Get team_member by id',
+            'Get role by id',
+            'Get task by id',
+            'Get all projects',
+            'Get all sprints',
+            'Get all user_stories',
+            'Change status of assigned task'
         ];
 
         foreach ($permissions as $permiso) {
@@ -51,15 +70,15 @@ class DatabaseSeeder extends Seeder
             'name' => 'administrator',
         ]);
 
-        Role::create([
+        $scrum_master = Role::create([
             'name' => 'scrum_master',
         ]);
 
-        Role::create([
+        $product_owner = Role::create([
             'name' => 'product_owner',
         ]);
 
-        Role::create([
+        $team_member = Role::create([
             'name' => 'team_member',
         ]);
 
@@ -144,6 +163,50 @@ class DatabaseSeeder extends Seeder
             'user_id' => $user->id,
             'project_id' => $project->id,
             'organization_id' => $mainOrg->id,
+        ]);
+
+        // assigning permissions to roles
+        /*
+            'name' => 'scrum_master',
+            'name' => 'product_owner',
+            'name' => 'team_member',
+        */
+
+
+        $team_member->syncPermissions([
+            'Change status of assigned task',
+            'Get user_stories',
+            'Get team members',
+            'Get tasks',
+            'Get project by id',
+            'Get sprint by id',
+            'Get user_story by id',
+            'Get team_member by id', 
+        ]);
+
+        $scrum_master->syncPermissions([
+            'Create sprints',
+            'Create user_stories',
+            'Create tasks',
+            'Edit tasks',
+            'Delete tasks',
+            'Edit projects',
+            'Edit sprints',
+            'Edit user_stories',
+            'Delete sprints',
+            'Delete user_stories',
+            'Assign tasks to a team member',
+        ]);
+
+        $product_owner->syncPermissions([
+            'Get project by id',
+            'Get all sprints',
+            'Get all user_stories',
+            'Edit user_story priority',
+            'Edit user_story sprint',
+            'Get roles',
+            'Get task by id',
+            'Get role by id',
         ]);
     }
 }

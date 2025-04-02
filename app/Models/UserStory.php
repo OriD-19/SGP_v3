@@ -36,4 +36,9 @@ class UserStory extends Model
     {
         return $this->belongsTo(Priority::class);
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
 }

@@ -18,7 +18,6 @@ Route::group(['prefix' => 'SGP/v1'], function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
 
-    Route::apiResource('organizations.projects', ProjectController::class);
 
     // Rutas protegidas **
     Route::middleware('auth:sanctum')->group(function () {
@@ -26,10 +25,12 @@ Route::group(['prefix' => 'SGP/v1'], function () {
 
         Route::apiResource('organizations', OrganizationController::class);
 
+        Route::apiResource('organizations.projects', ProjectController::class);
 
         Route::apiResource('organizations.projects.user_stories', UserStoryController::class);
 
         Route::post('organizations/{organization}/projects/{project}/user_stories/{user_story}/tasks/{task}/assign', [TaskController::class, 'assignUser']);
+        Route::post('organizations/{organization}/projects/{project}/user_stories/{user_story}/tasks/{task}/changeState', [TaskController::class, 'unassignUser']);
         Route::apiResource('organizations.projects.user_stories.tasks', TaskController::class);
 
         Route::apiResource('organizations.projects.sprints', SprintController::class);
