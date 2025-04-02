@@ -55,7 +55,8 @@ class User extends Authenticatable
     {
         return 'api';
     }
-    public function team_member()
+
+    public function team_members()
     {
         return $this->hasMany(TeamMember::class);
     }

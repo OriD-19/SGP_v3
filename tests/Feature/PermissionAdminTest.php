@@ -19,7 +19,6 @@ function createAdminUser()
     ]);
 
     $user->assignRole('administrator');
-
     return $user;
 }
 

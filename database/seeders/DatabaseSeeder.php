@@ -42,7 +42,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($permissions as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso]);
+            Permission::create(['name' => $permiso]);
         }
 
         //create roles
@@ -136,7 +136,7 @@ class DatabaseSeeder extends Seeder
         foreach ($permissions as $nombre_permiso) {
             $permission = Permission::where('name', $nombre_permiso)->first();
             if ($permission) {
-                $adminrole->permissions()->attach($permission);
+                $adminrole->givePermissionTo($permission);
             }
         }
 

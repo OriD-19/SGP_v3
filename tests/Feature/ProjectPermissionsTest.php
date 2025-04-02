@@ -8,6 +8,9 @@ uses(RefreshDatabase::class);
 
 test('admin can create projects', function () {
     $admin = createAdminUser();
+
+    echo $admin->roles;
+
     $project = Project::factory()->make();
 
     $this->actingAs($admin)
