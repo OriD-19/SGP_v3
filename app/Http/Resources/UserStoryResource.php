@@ -22,8 +22,8 @@ class UserStoryResource extends JsonResource
             'status' => $this->status,
             'priority' => $this->priority,
             'due_date' => $this->due_date,
-            'tasks' => TaskResource::collection($this->tasks),
-            'team_members' => UserResource::collection($this->team_members),
+            'tasks' => $this->tasks,
+            'team_members' => $this->team_members,
         ];
     }
 }

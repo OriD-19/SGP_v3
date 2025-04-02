@@ -23,6 +23,24 @@ class SprintPolicy
         return null;
     }
 
+    public function viewAny(User $user, int $projectId)
+    {
+        $checkRole = TeamMember::where('user_id', $user->id)
+            ->where('project_id', $projectId)
+            ->firstOrFail()->can('Get all sprints');
+
+        return $checkRole;
+    }
+
+    public function view(User $user, int $projectId)
+    {
+        $checkRole = TeamMember::where('user_id', $user->user)
+            ->where('project_id', $projectId)
+            ->firstOrFail()->can('Get sprint by id');
+
+        return $checkRole;
+    }
+
     public function create(TeamMember $teamMember, int $projectId)
     {
         $checkRole = TeamMember::where('user_id', $teamMember->user_id)

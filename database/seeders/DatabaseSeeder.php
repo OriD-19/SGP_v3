@@ -202,9 +202,11 @@ class DatabaseSeeder extends Seeder
             'Get project by id',
             'Get all sprints',
             'Get all user_stories',
+            'Get all projects',
             'Edit user_story priority',
             'Edit user_story sprint',
             'Get roles',
+            'Get tasks',
             'Get task by id',
             'Get role by id',
         ]);

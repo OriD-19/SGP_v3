@@ -4,14 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SprintCreateRequest;
 use App\Http\Requests\SprintUpdateRequest;
+use App\Http\Resources\SprintResource;
 use App\Models\Sprint;
 use Illuminate\Http\Request;
 
 class SprintController extends Controller
 {
-    public function index()
+    public function index(Request $request, $organizationId, $projectId)
     {
         // Logic to retrieve and return all sprints
+        // Check if the user has permission to view sprints
+        if ($request->user()->cannot('viewAny', [Sprint::class, $projectId])) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $sprints = Sprint::where('project_id', $projectId)->get();
+
+        return SprintResource::collection($sprints);
     }
     public function store(SprintCreateRequest $request)
     {

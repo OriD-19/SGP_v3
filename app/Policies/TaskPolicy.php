@@ -26,6 +26,24 @@ class TaskPolicy
         return null;
     }
 
+    public function viewAny(User $user, int $projectId)
+    {
+        $checkRole = TeamMember::where('user_id', $user->id)
+            ->where('project_id', $projectId)
+            ->firstOrFail()->can('Get tasks');
+
+        return $checkRole;
+    }
+
+    public function view(User $user, int $projectId)
+    {
+        $checkRole = TeamMember::where('user_id', $user->id)
+            ->where('project_id', $projectId)
+            ->firstOrFail()->can('Get task by id');
+
+        return $checkRole;
+    }
+
     public function store(User $user, int $projectId)
     {
 

@@ -7,38 +7,69 @@ use App\Models\User;
 
 class ProjectPolicy
 {
-    public function create(User $user, Project $project)
+
+    public function __construct()
     {
-        return $user->hasRole($user, 'administrator');
+        //
     }
 
-    public function update(TeamMember $teamMember, Project $project)
+    public function before(User $user, $ability): bool|null
     {
-        return $teamMember->hasRole($teamMember, $project, 'administrator');
+        if ($user->hasRole('administrator')) {
+            return true;
+        }
+
+        return null;
     }
 
-    public function delete(TeamMember $teamMember, Project $project)
+    public function viewAny(User $user)
     {
-        return $teamMember->hasRole($teamMember, $project, 'administrator');
+        $checkRole = TeamMember::where('user_id', $user->id)
+            ->first()
+            ->can('Get all projects');
+
+        return $checkRole;
     }
 
-    public function assignMember(TeamMember $teamMember, Project $project)
+    public function view(User $user, Project $project)
     {
-        return $teamMember->hasRole($teamMember, $project, 'administrator');
+        $checkRole = TeamMember::where('user_id', $user->id)
+            ->where('project_id', $project->id)
+            ->first()
+            ->can('Get project by id');
+
+        return $checkRole;
+    }
+
+    public function create(User $user)
+    {
+        return $user->hasRole('administrator');
+    }
+
+
+    public function update(User $user, Project $project)
+    {
+        $checkRole = TeamMember::where('user_id', $user->user_id)
+            ->where('project_id', $project->id)
+            ->first()
+            ->can('Edit projects');
+    }
+
+    public function delete(User $user, Project $project)
+    {
+        $checkRole = TeamMember::where('user_id', $user->user_id)
+            ->where('project_id', $project->id)
+            ->first()
+            ->can('Delete projects');
+    }
+
+    public function assignMember(User $user, Project $project)
+    {
+        return $user->hasRole('administrator');
     }
 
     public function updateMember(TeamMember $teamMember, Project $project)
     {
         return $teamMember->hasRole($teamMember, $project, 'administrator');
-    }
-
-    private function hasRole(TeamMember $teamMember, Project $project, string $roleName)
-    {
-        return TeamMember::where('user_id', $teamMember->user_id)
-            ->where('project_id', $project->id)
-            ->whereHas('role', function ($query) use ($roleName) {
-                $query->where('role', $roleName);
-            })
-            ->exists();
     }
 }

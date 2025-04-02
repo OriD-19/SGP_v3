@@ -12,9 +12,17 @@ use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
-    public function index()
+    public function index(Request $request, $organizationId, $projectId, $userStoryId)
     {
-        // Logic to display a list of tasks
+
+        if ($request->user()->cannot('viewAny', [Task::class, $projectId])) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $tasks = Task::where('user_story_id', $userStoryId)
+            ->get();
+
+        return response()->json(TaskResource::collection($tasks), 200);
     }
 
     public function store(Request $request, $organizationId, $projectId, $userStoryId)

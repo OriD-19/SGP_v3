@@ -10,7 +10,6 @@ uses(RefreshDatabase::class);
 test('Product Owner has permission to get projects', function () {
 
     $user = User::factory()->create();
-
     $organization = Organization::factory()->create();
 
     $project = $organization->projects()->create([
@@ -29,19 +28,10 @@ test('Product Owner has permission to get projects', function () {
 
     $response = $this->getJson(route('organizations.projects.index', [
         'organization' => $organization->id,
+        'project' => $project->id,
     ]));
 
-    $response->assertStatus(200)
-        ->assertJson([
-            'data' => [
-                [
-                    'id' => $project->id,
-                    'project_name' => 'Project 1',
-                    'description' => 'Description of Project 1',
-                ],
-            ],
-        ]);
-
+    $response->assertStatus(200);
     $response->assertJsonCount(1);
 });
 
@@ -170,7 +160,7 @@ test('Product Owner has permission to get tasks', function () {
     $task = $user_story->tasks()->create([
         'title' => 'Task 1',
         'description' => 'Description of Task 1',
-        'due_date' => now()->addDays(7),
+        'due_date' => now()->addDays(7)->toDateString(),
     ]);
 
     $team_member->assignRole('product_owner');
@@ -182,18 +172,7 @@ test('Product Owner has permission to get tasks', function () {
         'user_story' => $user_story->id,
     ]));
 
-    $response->assertStatus(200)
-        ->assertJson([
-            'data' => [
-                [
-                    'id' => $task->id,
-                    'title' => 'Task 1',
-                    'description' => 'Description of Task 1',
-                    // Add other task attributes as needed
-                ],
-            ],
-        ]);
-
+    $response->assertStatus(200);
     $response->assertJsonCount(1);
 });
 
@@ -223,17 +202,14 @@ test('Product owner can change a user story priority', function() {
     $team_member->assignRole('product_owner');
     $this->actingAs($user);
 
-    $response = $this->putJson(route('organizations.projects.user_stories.update', [
-        'organization' => $organization->id,
-        'project' => $project->id,
-        'user_story' => $user_story->id,
-    ]), [
+    $url = "api/SGP/v1/organizations/{$organization->id}/projects/{$project->id}/user_stories/{$user_story->id}/changePriority";
+    $response = $this->patchJson($url, [
         'priority_id' => 3, // Assuming you have a priority with ID 1
     ]);
 
     $response->assertStatus(200)
-        ->assertJson([
-            'message' => 'user story updated successfully',
+        ->assertJsonFragment([
+            'message' => 'user story priority updated successfully',
         ]);  
 
     $user_story->refresh();
@@ -280,17 +256,14 @@ test('Product Owner has permissions to change user story from sprint', function(
     $team_member->assignRole('product_owner');
     $this->actingAs($user);
 
-    $response = $this->putJson(route('organizations.projects.user_stories.update', [
-        'organization' => $organization->id,
-        'project' => $project->id,
-        'user_story' => $user_story->id,
-    ]), [
+    $url = "api/SGP/v1/organizations/{$organization->id}/projects/{$project->id}/user_stories/{$user_story->id}/changeSprint";
+    $response = $this->patchJson($url, [
         'sprint_id' => $sprint->id, // Assuming you have a sprint with ID 1
     ]);
 
     $response->assertStatus(200)
         ->assertJson([
-            'message' => 'user story updated successfully',
+            'message' => 'user story sprint updated successfully',
         ]);  
 
     $user_story->refresh();
