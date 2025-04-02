@@ -59,7 +59,7 @@ test('log out successfully', function () {
     $logoutResponse = $this->postJson('api/SGP/v1/logout', []);
 
     $logoutResponse->assertStatus(200)
-        ->assertJson(['message' => 'Logged out successfully']);
+        ->assertJson(['message' => 'logout successful']);
 
 });
 

@@ -16,9 +16,11 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        if (Auth::guard('web')->attempt($request->only('email', 'password'))) {
+        if (Auth::attempt($request->only('email', 'password'))) {
             // Generate a new token for the authenticated user
-            $token = Auth::user()->createToken('auth_token')->plainTextToken;
+            /** @var \App\Models\User */
+            $user = Auth::user();
+            $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
                 'token' => $token,
@@ -30,7 +32,10 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        /** @var \App\Models\User */
+        $user = Auth::user();
+        $user->tokens()->delete();
+
         return response()->json(['message' => 'logout successful']);
     }
 }

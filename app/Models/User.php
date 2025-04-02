@@ -51,9 +51,11 @@ class User extends Authenticatable
         ];
     }
 
+    public $guard_name = 'web';
+
     protected function getDefaultGuardName(): string
     {
-        return 'api';
+        return 'web';
     }
 
     public function team_members()

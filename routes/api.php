@@ -18,13 +18,14 @@ Route::group(['prefix' => 'SGP/v1'], function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
 
+    Route::apiResource('organizations.projects', ProjectController::class);
+
     // Rutas protegidas **
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
 
         Route::apiResource('organizations', OrganizationController::class);
 
-        Route::apiResource('organizations.projects', ProjectController::class);
 
         Route::apiResource('organizations.projects.user_stories', UserStoryController::class);
 

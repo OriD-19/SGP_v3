@@ -16,7 +16,12 @@ test('admin can create projects', function () {
     $this->actingAs($admin)
         ->postJson(route('organizations.projects.store', [
             'organization' => 1,
-        ]), $project->toArray())
+        ]), [
+            'project_name' => $project->name,
+            'description' => $project->description,
+            'start_date' => $project->start_date,
+            'end_date' => $project->end_date,
+        ])
         ->assertStatus(201);
 });
 
