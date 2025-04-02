@@ -49,12 +49,10 @@ class TaskController extends Controller
         // Logic to update a specific task
     }
 
-    public function destroy($id)
+    public function destroy($organizationId, $projectId, $userStoryId, $taskId)
     {
-        // Logic to delete a specific task
-        return response()->json([
-            'message' => 'Task deleted successfully'
-        ], 204);
+        Task::destroy($taskId);
+        return response()->json(null, 204);
     }
 
     public function assignUser(Request $request, $taskId, $userId)

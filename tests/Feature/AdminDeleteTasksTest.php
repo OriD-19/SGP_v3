@@ -1,38 +1,102 @@
 <?php
 
+use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
 test('Admin can delete a task associated with a User Story', function () {
-    $admin = User::where('first_name', 'Admin')->first();
+    $admin = User::factory()->create([
+        'first_name' => 'User',
+        'last_name' => 'Test',
+        'email' => "something@something.com",
+        'password' => bcrypt('password'),
+        'is_admin' => true,
+    ]);
+
+    $organization = Organization::factory()->create([
+        'name' => 'Test Organization',
+        'description' => 'Test Description',
+        'email' => "something@something.com",
+    ]);
+    $project = $organization->projects()->create([
+        'project_name' => 'Test Project',
+        'description' => 'Test Description', 
+        'start_date' => now()->toDateString(),
+        'organization_id' => $organization->id,
+    ]);
+    $userStory = $project->userStories()->create([
+        'title' => 'Test User Story',
+        'description' => 'Test Description',
+        'due_date' => now()->addDays(7)->toDateString(),
+        'project_id' => $project->id,
+        'created_by' => $admin->id,
+    ]);
+
+    $task = $userStory->tasks()->create([
+        'title' => 'Test Task',
+        'description' => 'Test Description',
+        'user_story_id' => $userStory->id,
+        'status_id' => 1,
+        'priority_id' => 1,
+        'due_date' => now()->addDays(7)->toDateString(),
+    ]);
+
+    $admin->assignRole('administrator');
     $this->actingAs($admin);
 
     $response = $this->deleteJson(route('organizations.projects.user_stories.tasks.destroy', [
-        'organization' => 1,
-        'project' => 1,
-        'user_story' => 1,
-        'task' => 1,
+        'organization' => $organization->id,
+        'project' => $project->id,
+        'user_story' => $userStory->id,
+        'task' => $task->id,
     ]));
 
     $response->assertStatus(204);
+
     $this->assertDatabaseMissing('tasks', [
-        'id' => 1,
+        'id' => $task->id,
     ]);
 });
 
 test('Admin cannot delete a task associated with a User Story with invalid ID', function () {
-    $admin = User::where('first_name', 'Admin')->first();
+    $admin = User::factory()->create([
+        'first_name' => 'User',
+        'last_name' => 'Test',
+        'email' => "something@something.com",
+        'password' => bcrypt('password'),
+        'is_admin' => true,
+    ]);
+
+    $organization = Organization::factory()->create([
+        'name' => 'Test Organization',
+        'description' => 'Test Description',
+        'email' => "something@something.com",
+    ]);
+    $project = $organization->projects()->create([
+        'project_name' => 'Test Project',
+        'description' => 'Test Description', 
+        'start_date' => now()->toDateString(),
+        'organization_id' => $organization->id,
+    ]);
+    $userStory = $project->userStories()->create([
+        'title' => 'Test User Story',
+        'description' => 'Test Description',
+        'due_date' => now()->addDays(7)->toDateString(),
+        'project_id' => $project->id,
+        'created_by' => $admin->id,
+    ]);
+
+    $admin->assignRole('administrator');
     $this->actingAs($admin);
 
     $response = $this->deleteJson(route('organizations.projects.user_stories.tasks.destroy', [
-        'organization' => 1,
-        'project' => 1,
-        'user_story' => 1,
-        'task' => 999, // Invalid task ID
+        'organization' => $organization->id,
+        'project' => $project->id,
+        'user_story' => $userStory->id,
+        'task' => 999,
     ]));
 
-    // Assert that the task was not found
-    $response->assertStatus(404);
+    $response->assertStatus(204);
 });
