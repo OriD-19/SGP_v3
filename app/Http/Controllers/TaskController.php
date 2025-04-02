@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PatchTaskRequest;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use App\Models\UserStory;
@@ -44,9 +45,17 @@ class TaskController extends Controller
         // Logic to display a specific task
     }
 
-    public function update(Request $request, $id)
+    public function update(PatchTaskRequest $request, $organizationId, $projectId, $userStoryId, $taskId)
     {
-        // Logic to update a specific task
+        // Logic to update an existing task
+        $validated = $request->validated();
+
+        $task = Task::findOrFail($taskId);
+
+        $task->fill($validated);
+        $task->save();
+
+        return response()->json(TaskResource::make($task), 200);
     }
 
     public function destroy($organizationId, $projectId, $userStoryId, $taskId)

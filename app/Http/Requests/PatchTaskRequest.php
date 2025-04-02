@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class ProjectCreateRequest extends FormRequest
+class PatchTaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +24,12 @@ class ProjectCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'project_name' => 'required|string|max:255',
+            'title' => 'nullable|string|max:255',
             'description' => 'nullable|string',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
+            'status_id' => 'nullable|exists:statuses,id',
+            'priority_id' => 'nullable|exists:priorities,id',
+            'due_date' => 'nullable|date_format:Y-m-d',
+            'user_story_id' => 'nullable|exists:user_stories,id',
         ];
     }
 }
