@@ -4,7 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 
-class UserStoriePolicy
+class UserStoryPolicy
 {
     /**
      * Create a new policy instance.

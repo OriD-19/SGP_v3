@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PatchTaskRequest;
 use App\Http\Resources\TaskResource;
+use App\Models\Project;
 use App\Models\Task;
 use App\Models\UserStory;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -18,6 +20,9 @@ class TaskController extends Controller
     public function store(Request $request, $organizationId, $projectId, $userStoryId)
     {
         // Logic to store a new task
+        if ($request->user()->cannot('store', Task::class, $projectId)) {
+            abort(403, 'Unauthorized action.');
+        }
 
         $request->validate([
             'title' => 'required|string|max:255',

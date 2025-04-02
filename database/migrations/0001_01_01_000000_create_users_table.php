@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('password');
             $table->boolean('is_admin')->default(false);
 
-            $table->foreignId('organization_id')->constrained('organizations')->onDelete('cascade');
+            $table->foreignId('organization_id')->nullable()->constrained('organizations')->onDelete('cascade');
 
             $table->rememberToken();
             $table->timestamps();

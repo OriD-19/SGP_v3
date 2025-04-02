@@ -60,45 +60,77 @@ test('Admin user can create Task associated with a User Story', function () {
 
 test('Admin user cannot create Task with invalid User Story ID', function () {
 
-    // Define the IDs for the project and user story
-    $project_id = 1;
-    $user_story_id = 999; // Invalid User Story ID
-    $organization_id = 1;
 
-    $user = User::where('first_name', 'Admin')->first();
+    $organization = Organization::factory()->create();
+    $project = $organization->projects()->create([
+        'project_name' => 'Test Project',
+        'description' => 'This is a test project.',
+        'due_date' => now()->addDays(7)->toDateString(),
+    ]);
+    $user_story = $project->userStories()->create([
+        'title' => 'Test User Story',
+        'description' => 'This is a test user story.',
+        'due_date' => now()->addDays(7)->toDateString(),
+        'project_id' => $project->id,
+    ]);
+
+    $user = User::factory()->create([
+        'is_admin' => true,
+        'organization_id' => $organization->id,
+    ]);
+
+    $user->assignRole('administrator');
     $this->actingAs($user);
 
     $response = $this->postJson(route('organizations.projects.user_stories.tasks.store', [
-        "organization" => $organization_id,
-        "project" => $project_id,
-        "user_story" => $user_story_id,
+        "organization" => $organization->id,
+        "project" => $project->id,
+        "user_story" => 9999, //invalid user story ID
     ]), [
-        'name' => 'Test Task',
+        'title' => 'Test Task',
         'description' => 'This is a test task.',
+        'status_id' => 1,
+        'priority_id' => 1,
+        'due_date' => now()->addDays(7)->toDateString(),
     ]);
 
-    $response->assertStatus(422);
+    $response->assertStatus(404);
 });
 
 test('Admin user cannot create Task with missing required fields', function () {
 
-    // Define the IDs for the project and user story
-    $project_id = 1;
-    $user_story_id = 1;
-    $organization_id = 1;
 
-    //$this->seed();
+    $organization = Organization::factory()->create();
+    $project = $organization->projects()->create([
+        'project_name' => 'Test Project',
+        'description' => 'This is a test project.',
+        'due_date' => now()->addDays(7)->toDateString(),
+    ]);
+    $user_story = $project->userStories()->create([
+        'title' => 'Test User Story',
+        'description' => 'This is a test user story.',
+        'due_date' => now()->addDays(7)->toDateString(),
+        'project_id' => $project->id,
+    ]);
 
-    $user = User::where('first_name', 'Admin')->first();
+    $user = User::factory()->create([
+        'is_admin' => true,
+        'organization_id' => $organization->id,
+    ]);
+
+    $user->assignRole('administrator');
     $this->actingAs($user);
 
     $response = $this->postJson(route('organizations.projects.user_stories.tasks.store', [
-        "organization" => $organization_id,
-        "project" => $project_id,
-        "user_story" => $user_story_id,
+        "organization" => $organization->id,
+        "project" => $project->id,
+        "user_story" => $user_story->id,
     ]), [
-        'name' => '', // Missing name
+        'title' => '',
         'description' => 'This is a test task.',
+        'status_id' => 1,
+        'priority_id' => 1,
+        'due_date' => now()->addDays(7)->toDateString(),
     ]);
 
     $response->assertStatus(422);

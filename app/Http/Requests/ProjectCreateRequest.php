@@ -12,8 +12,7 @@ class ProjectCreateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $user = Auth::user();
-        return $user && $user->hasRole('administrator');
+        return true;
     }
 
     /**
