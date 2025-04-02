@@ -6,7 +6,11 @@ use Spatie\Permission\Models\Role;
 use App\Models\Sprint;
 use App\Models\TeamMember;
 use App\Models\User;
+<<<<<<< HEAD
 use App\Models\UserStory;
+=======
+use App\Models\Task;
+>>>>>>> 7a6b6fb (Update rol and permissions)
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -353,4 +357,312 @@ test('Scrum Master puede eliminar una User Story', function () {
 
     // Verificar que la User Story fue eliminada de la base de datos
     $this->assertDatabaseMissing('user_stories', ['id' => $userStory->id]);
+});
+
+test('Scrum Master puede crear una Task', function () {
+    $organization = Organization::factory()->create();
+    $project = Project::factory()->create(['organization_id' => $organization->id]);
+
+    // Crear el rol de Scrum Master
+    $scrumMasterRole = Role::factory()->create(['role' => 'scrum_master']);
+
+    // Crear usuario y asignarle el rol de Scrum Master
+    $scrumMaster = User::factory()->create(['organization_id' => $organization->id]);
+
+    TeamMember::factory()->create([
+        'user_id' => $scrumMaster->id,
+        'project_id' => $project->id,
+        'role_id' => $scrumMasterRole->id,
+    ]);
+
+    // Crear un Sprint
+    $sprint = Sprint::factory()->create(['project_id' => $project->id]);
+
+    // Iniciar sesión como Scrum Master
+    $loginResponse = $this->postJson('api/SGP/v1/login', [
+        'email' => $scrumMaster->email,
+        'password' => 'password',
+    ]);
+
+    $loginResponse->assertStatus(200);
+    $token = $loginResponse->json('token');
+
+    // Intentar crear una Task
+    $taskData = [
+        'title' => 'Nueva tarea',
+        'description' => 'Descripción de la nueva tarea',
+        'due_date' => now()->addDays(7)->toDateString(),
+        'sprint_id' => $sprint->id,
+    ];
+
+    $createResponse = $this->postJson('api/SGP/v1/tasks', $taskData, [
+        'Authorization' => "Bearer $token",
+    ]);
+
+    $createResponse->assertStatus(201)
+        ->assertJson(['message' => 'Task creada correctamente']);
+
+    // Verificar que la Task fue creada en la base de datos
+    $this->assertDatabaseHas('tasks', [
+        'title' => $taskData['title'],
+        'description' => $taskData['description'],
+        'due_date' => $taskData['due_date'],
+        'sprint_id' => $sprint->id,
+    ]);
+});
+
+test('Scrum Master puede editar tasks', function () {
+    // Crear un usuario con rol Scrum Master
+    $scrumMaster = User::factory()->create(['role' => 'Scrum Master']);
+    
+    // Crear una tarea existente
+    $task = Task::factory()->create();
+    
+    // Simular que el Scrum Master intenta editar la tarea
+    $response = actingAs($scrumMaster)->put(route('tasks.update', $task->id), [
+        'title' => 'Nuevo título',
+        'description' => 'Descripción actualizada',
+        'due_date' => now()->addDays(5),
+    ]);
+    
+    // Verificar que la respuesta es exitosa
+    $response->assertStatus(200);
+    
+    // Verificar que la tarea se actualizó en la base de datos
+    $this->assertDatabaseHas('tasks', [
+        'id' => $task->id,
+        'title' => 'Nuevo título',
+        'description' => 'Descripción actualizada',
+    ]);
+});
+
+test('Scrum Master puede eliminar tasks', function () {
+    // Crear un usuario con rol Scrum Master
+    $scrumMaster = User::factory()->create(['role' => 'Scrum Master']);
+    
+    // Crear una tarea existente
+    $task = Task::factory()->create();
+    
+    // Simular que el Scrum Master intenta eliminar la tarea
+    $response = actingAs($scrumMaster)->delete(route('tasks.destroy', $task->id));
+    
+    // Verificar que la respuesta es exitosa
+    $response->assertStatus(200);
+    
+    // Verificar que la tarea fue eliminada de la base de datos
+    $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
+});
+
+test('Cliente solo puede visualizar proyectos, sprints, user stories y tareas', function () {
+    $organization = Organization::factory()->create();
+    $project = Project::factory()->create(['organization_id' => $organization->id]);
+    
+    // Crear el rol de Cliente
+    $clientRole = Role::factory()->create(['role' => 'cliente']);
+
+    // Crear usuario y asignarle el rol de Cliente
+    $client = User::factory()->create(['organization_id' => $organization->id]);
+
+    TeamMember::factory()->create([
+        'user_id' => $client->id,
+        'project_id' => $project->id,
+        'role_id' => $clientRole->id,
+    ]);
+
+    // Crear un Sprint y una Task
+    $sprint = Sprint::factory()->create(['project_id' => $project->id]);
+    $task = Task::factory()->create([
+        'title' => 'Task del cliente',
+        'description' => 'Descripción de task del cliente',
+        'sprint_id' => $sprint->id,
+    ]);
+
+    // Crear una User Story
+    $userStory = UserStory::factory()->create([
+        'project_id' => $project->id,
+        'title' => 'User Story del cliente',
+        'description' => 'Descripción de user story del cliente',
+    ]);
+
+    // Iniciar sesión como Cliente
+    $loginResponse = $this->postJson('api/SGP/v1/login', [
+        'email' => $client->email,
+        'password' => 'password',
+    ]);
+
+    $loginResponse->assertStatus(200);
+    $token = $loginResponse->json('token');
+
+    // Intentar obtener los proyectos (debería funcionar)
+    $response = $this->getJson('api/SGP/v1/projects', [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(200);
+
+    // Intentar obtener los sprints (debería funcionar)
+    $response = $this->getJson("api/SGP/v1/projects/{$project->id}/sprints", [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(200);
+
+    // Intentar obtener las user stories (debería funcionar)
+    $response = $this->getJson("api/SGP/v1/projects/{$project->id}/user-stories", [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(200);
+
+    // Intentar obtener las tareas (debería funcionar)
+    $response = $this->getJson("api/SGP/v1/sprints/{$sprint->id}/tasks", [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(200);
+
+    // Intentar editar un proyecto (debería fallar)
+    $response = $this->putJson("api/SGP/v1/projects/{$project->id}", [
+        'title' => 'Nuevo título de proyecto',
+    ], [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(403);
+
+    // Intentar eliminar un proyecto (debería fallar)
+    $response = $this->deleteJson("api/SGP/v1/projects/{$project->id}", [], [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(403);
+
+    // Intentar editar un sprint (debería fallar)
+    $response = $this->putJson("api/SGP/v1/sprints/{$sprint->id}", [
+        'title' => 'Nuevo título de sprint',
+    ], [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(403);
+
+    // Intentar eliminar una user story (debería fallar)
+    $response = $this->deleteJson("api/SGP/v1/user-stories/{$userStory->id}", [], [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(403);
+
+    // Intentar editar una tarea (debería fallar)
+    $response = $this->putJson("api/SGP/v1/tasks/{$task->id}", [
+        'title' => 'Nuevo título de tarea',
+    ], [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(403);
+
+    // Intentar eliminar una tarea (debería fallar)
+    $response = $this->deleteJson("api/SGP/v1/tasks/{$task->id}", [], [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(403);
+});
+
+test('Team Member puede visualizar proyectos, sprints, user stories y tareas', function () {
+    $organization = Organization::factory()->create();
+    $project = Project::factory()->create(['organization_id' => $organization->id]);
+    
+    // Crear el rol de Team Member
+    $teamMemberRole = Role::factory()->create(['role' => 'team_member']);
+
+    // Crear usuario y asignarle el rol de Team Member
+    $teamMember = User::factory()->create(['organization_id' => $organization->id]);
+
+    TeamMember::factory()->create([
+        'user_id' => $teamMember->id,
+        'project_id' => $project->id,
+        'role_id' => $teamMemberRole->id,
+    ]);
+
+    // Crear un Sprint y una Task
+    $sprint = Sprint::factory()->create(['project_id' => $project->id]);
+    $task = Task::factory()->create([
+        'title' => 'Tarea del miembro del equipo',
+        'description' => 'Descripción de tarea del miembro del equipo',
+        'sprint_id' => $sprint->id,
+    ]);
+
+    // Crear una User Story
+    $userStory = UserStory::factory()->create([
+        'project_id' => $project->id,
+        'title' => 'User Story del miembro del equipo',
+        'description' => 'Descripción de user story del miembro del equipo',
+    ]);
+
+    // Iniciar sesión como Team Member
+    $loginResponse = $this->postJson('api/SGP/v1/login', [
+        'email' => $teamMember->email,
+        'password' => 'password',
+    ]);
+
+    $loginResponse->assertStatus(200);
+    $token = $loginResponse->json('token');
+
+    // Intentar obtener los proyectos (debería funcionar)
+    $response = $this->getJson('api/SGP/v1/projects', [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(200);
+
+    // Intentar obtener los sprints (debería funcionar)
+    $response = $this->getJson("api/SGP/v1/projects/{$project->id}/sprints", [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(200);
+
+    // Intentar obtener las user stories (debería funcionar)
+    $response = $this->getJson("api/SGP/v1/projects/{$project->id}/user-stories", [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(200);
+
+    // Intentar obtener las tareas (debería funcionar)
+    $response = $this->getJson("api/SGP/v1/sprints/{$sprint->id}/tasks", [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(200);
+
+    // Intentar editar un proyecto (debería fallar)
+    $response = $this->putJson("api/SGP/v1/projects/{$project->id}", [
+        'title' => 'Nuevo título de proyecto',
+    ], [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(403);
+
+    // Intentar eliminar un proyecto (debería fallar)
+    $response = $this->deleteJson("api/SGP/v1/projects/{$project->id}", [], [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(403);
+
+    // Intentar editar un sprint (debería fallar)
+    $response = $this->putJson("api/SGP/v1/sprints/{$sprint->id}", [
+        'title' => 'Nuevo título de sprint',
+    ], [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(403);
+
+    // Intentar eliminar una user story (debería fallar)
+    $response = $this->deleteJson("api/SGP/v1/user-stories/{$userStory->id}", [], [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(403);
+
+    // Intentar editar una tarea (debería fallar)
+    $response = $this->putJson("api/SGP/v1/tasks/{$task->id}", [
+        'title' => 'Nuevo título de tarea',
+    ], [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(403);
+
+    // Intentar eliminar una tarea (debería fallar)
+    $response = $this->deleteJson("api/SGP/v1/tasks/{$task->id}", [], [
+        'Authorization' => "Bearer $token",
+    ]);
+    $response->assertStatus(403);
 });
