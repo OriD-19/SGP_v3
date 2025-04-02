@@ -69,8 +69,6 @@ test('Test admin permissions for deleting a User Story', function () {
 
 test('Test admin permissions for deleting a User Story with invalid ID', function () {
 
-
-
     // Login as the admin user
     $user = User::factory()->create([
         'first_name' => 'Admin',

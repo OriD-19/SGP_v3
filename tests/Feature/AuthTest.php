@@ -90,7 +90,7 @@ test('log out successfully', function () {
     $this->assertAuthenticated('sanctum'); //ver si esto es necesario
 });
 
-test('unauthorized user cannot access protected content', function () {
+test('unauthenticated user cannot access protected content', function () {
     $response = $this->getJson(route('organizations.index'));
 
     $response->assertStatus(401)

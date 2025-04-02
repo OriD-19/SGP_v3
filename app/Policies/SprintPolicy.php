@@ -8,28 +8,45 @@ use App\Models\User;
 
 class SprintPolicy
 {
-    public function create(TeamMember $teamMember, Sprint $sprint)
+
+    public function __construct()
     {
-        return $this->hasRole($teamMember, $sprint, 'administrator');
+        //
+    }
+
+    public function before(User $user, $ability): bool|null
+    {
+        if ($user->hasRole('administrator')) {
+            return true;
+        }
+
+        return null;
+    }
+
+    public function create(TeamMember $teamMember, int $projectId)
+    {
+        $checkRole = TeamMember::where('user_id', $teamMember->user_id)
+            ->where('project_id', $projectId)
+            ->firstOrFail()->can('Create sprints');
+
+        return $checkRole;
     }
 
     public function update(TeamMember $teamMember, Sprint $sprint)
     {
-        return $this->hasRole($teamMember, $sprint, 'administrator');
+        $checkRole = TeamMember::where('user_id', $teamMember->user_id)
+            ->where('sprint_id', $sprint->id)
+            ->firstOrFail()->can('Edit sprints');
+
+        return $checkRole;
     }
 
     public function delete(TeamMember $teamMember, Sprint $sprint)
     {
-        return $this->hasRole($teamMember, $sprint, 'administrator');
-    }
-
-    private function hasRole(TeamMember $teamMember, Sprint $sprint, string $roleName)
-    {
-        return TeamMember::where('user_id', $teamMember->user_id)
+        $checkRole = TeamMember::where('user_id', $teamMember->user_id)
             ->where('sprint_id', $sprint->id)
-            ->whereHas('role', function ($query) use ($roleName) {
-                $query->where('role', $roleName);
-            })
-            ->exists();
+            ->firstOrFail()->can('Delete sprints');
+
+        return $checkRole;
     }
 }

@@ -52,6 +52,10 @@ class TaskController extends Controller
 
     public function update(PatchTaskRequest $request, $organizationId, $projectId, $userStoryId, $taskId)
     {
+        if ($request->user()->cannot('update', Task::class, $projectId)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         // Logic to update an existing task
         $validated = $request->validated();
 
@@ -63,8 +67,12 @@ class TaskController extends Controller
         return response()->json(TaskResource::make($task), 200);
     }
 
-    public function destroy($organizationId, $projectId, $userStoryId, $taskId)
+    public function destroy(Request $request, $organizationId, $projectId, $userStoryId, $taskId)
     {
+        if($request->user()->cannot('delete', Task::class, $projectId)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $task = Task::findOrFail($taskId);
 
         $task->delete();

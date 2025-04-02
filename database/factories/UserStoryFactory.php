@@ -21,6 +21,7 @@ class UserStoryFactory extends Factory
             'description' => $this->faker->paragraph(),
             'due_date' => $this->faker->dateTimeBetween('now', '+1 month'),
             'project_id' => 1,
+            'priority_id' => 1,
         ];
     }
 }

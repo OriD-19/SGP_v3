@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SprintCreateRequest;
+use App\Http\Requests\SprintUpdateRequest;
+use App\Models\Sprint;
 use Illuminate\Http\Request;
 
 class SprintController extends Controller
@@ -10,20 +13,61 @@ class SprintController extends Controller
     {
         // Logic to retrieve and return all sprints
     }
-    public function store(Request $request)
+    public function store(SprintCreateRequest $request)
     {
-        // Logic to create a new sprint
+        $validated = $request->validated();
+
+        $sprint = Sprint::create([
+            'description' => $validated['description'],
+            'duration' => $validated['duration'],
+            'start_date' => $validated['start_date'],
+            'active' => false, // active by default
+        ]);
+
+        return response()->json([
+            'message' => 'Sprint created successfully',
+            'sprint' => $sprint,
+        ], 201);
+
     }
     public function show($id)
     {
         // Logic to retrieve and return a specific sprint
     }
-    public function update(Request $request, $id)
+    public function update(SprintUpdateRequest $request, $organizationId, $projectId, $sprintId)
     {
+        // Check if the user has permission to update the sprint
+        $sprint = Sprint::findOrFail($sprintId);
+        if ($request->user()->cannot('update', $sprint)) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Validate the request
+        $validated = $request->validated();
+
         // Logic to update a specific sprint
+
+        $sprint->fill($validated);
+        $sprint->save();
+
+        return response()->json([
+            'message' => 'Sprint updated successfully',
+            'sprint' => $sprint,
+        ], 200);
     }
-    public function destroy($id)
+
+    public function destroy(Request $request, $organizationId, $projectId, $sprintId)
     {
         // Logic to delete a specific sprint
+        $sprint = Sprint::findOrFail($sprintId);
+        if ($request->user()->cannot('delete', $sprint)) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $sprint->delete();
+
+        return response()->json([
+            'message' => 'sprint deleted successfully',
+        ], 200);
     }
 }

@@ -24,7 +24,9 @@ function createAdminUser()
 
 test('admin can create sprints', function () {
     $admin = createAdminUser();
-    $sprint = Sprint::factory()->make();
+    $sprint = Sprint::factory()->make([
+        'start_date' => now()->toDateString(),
+    ]);
 
     $this->actingAs($admin)
         ->postJson(route('organizations.projects.sprints.store', [
@@ -32,6 +34,11 @@ test('admin can create sprints', function () {
             'project' => 1,
         ]), $sprint->toArray())
         ->assertStatus(201);
+
+    $this->assertDatabaseHas('sprints', [
+            'description' => $sprint->description,
+            'duration' => $sprint->duration,
+        ]);
 });
 
 test('admin can update sprints', function () {
@@ -39,13 +46,12 @@ test('admin can update sprints', function () {
     $sprint = Sprint::factory()->create();
 
     $updatedData = [
-        'title' => 'Updated Sprint Title',
         'description' => 'Updated Sprint Description',
         'duration' => 4,
     ];
 
     $this->actingAs($admin)
-        ->putJson(route('organizations.projects.sprints.update', [
+        ->patchJson(route('organizations.projects.sprints.update', [
             'organization' => 1,
             'project' => 1,
             'sprint' => $sprint->id,
@@ -53,7 +59,7 @@ test('admin can update sprints', function () {
         ->assertStatus(200);
 
     $sprint->refresh();
-    $this->assertEquals('Updated Sprint Title', $sprint->title);
+
     $this->assertEquals('Updated Sprint Description', $sprint->description);
     $this->assertEquals(4, $sprint->duration);
 });
@@ -77,7 +83,9 @@ test('admin can delete sprints', function () {
 
 test('admin can create user stories', function () {
     $admin = createAdminUser();
-    $userStory = UserStory::factory()->make();
+    $userStory = UserStory::factory()->make([
+        'due_date' => now()->addDays(7)->toDateString(),
+    ]);
 
     $this->actingAs($admin)
         ->postJson(route('organizations.projects.user_stories.store', [
@@ -85,6 +93,11 @@ test('admin can create user stories', function () {
             'project' => 1,
         ]), $userStory->toArray())
         ->assertStatus(201);
+
+    $this->assertDatabaseHas('user_stories', [
+        'title' => $userStory->title,
+        'description' => $userStory->description,
+    ]);
 });
 
 test('admin can update user stories', function () {

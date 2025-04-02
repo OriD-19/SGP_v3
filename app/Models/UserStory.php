@@ -20,6 +20,7 @@ class UserStory extends Model
         'description',
         'due_date',
         'project_id',
+        'priority_id',
     ];
 
     public function sprint()

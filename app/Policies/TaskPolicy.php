@@ -40,7 +40,16 @@ class TaskPolicy
     {
         $checkRole = TeamMember::where('user_id', $user->id)
             ->where('project_id', $projectId)
-            ->firstOrFail()->can('Create tasks');
+            ->firstOrFail()->can('Edit tasks');
+
+        return $checkRole;
+    }
+
+    public function delete(User $user, Task $task, int $projectId)
+    {
+        $checkRole = TeamMember::where('user_id', $user->id)
+            ->where('project_id', $projectId)
+            ->firstOrFail()->can('Delete tasks');
 
         return $checkRole;
     }
