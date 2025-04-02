@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TaskResource;
+use App\Models\Task;
+use App\Models\UserStory;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -11,16 +14,29 @@ class TaskController extends Controller
         // Logic to display a list of tasks
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $organizationId, $projectId, $userStoryId)
     {
         // Logic to store a new task
-        return response()->json([
-            'message' => 'Task created successfully',
-            'task' => [
-                'id' => 1,
-                'title' => $request->input('title'),
-            ]
-        ], 201);
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status_id' => 'required|exists:statuses,id',
+            'priority_id' => 'required|exists:priorities,id',
+            'due_date' => 'nullable|date_format:Y-m-d',
+        ]);
+
+        $userStory = UserStory::findOrFail($userStoryId);
+
+        $task = $userStory->tasks()->save(new Task([
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'status_id' => $request->input('status_id'),
+            'priority_id' => $request->input('priority_id'),
+            'due_date' => $request->input('due_date'),
+        ]));
+
+        return response()->json(TaskResource::make($task), 201);
     }
 
     public function show($id)

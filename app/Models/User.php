@@ -60,7 +60,7 @@ class User extends Authenticatable
 
     public function team_members()
     {
-        return $this->hasMany(TeamMember::class);
+        return $this->belongsToMany(TeamMember::class);
     }
 
     public function organization()

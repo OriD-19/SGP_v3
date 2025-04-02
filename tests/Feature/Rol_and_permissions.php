@@ -6,11 +6,8 @@ use Spatie\Permission\Models\Role;
 use App\Models\Sprint;
 use App\Models\TeamMember;
 use App\Models\User;
-<<<<<<< HEAD
 use App\Models\UserStory;
-=======
 use App\Models\Task;
->>>>>>> 7a6b6fb (Update rol and permissions)
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -419,7 +416,7 @@ test('Scrum Master puede editar tasks', function () {
     $task = Task::factory()->create();
     
     // Simular que el Scrum Master intenta editar la tarea
-    $response = actingAs($scrumMaster)->put(route('tasks.update', $task->id), [
+    $response = $this->actingAs($scrumMaster)->put(route('organizations.projects.user_stories.tasks.update', $task->id), [
         'title' => 'Nuevo título',
         'description' => 'Descripción actualizada',
         'due_date' => now()->addDays(5),
@@ -444,7 +441,7 @@ test('Scrum Master puede eliminar tasks', function () {
     $task = Task::factory()->create();
     
     // Simular que el Scrum Master intenta eliminar la tarea
-    $response = actingAs($scrumMaster)->delete(route('tasks.destroy', $task->id));
+    $response = $this->actingAs($scrumMaster)->delete(route('organizations.projects.user_stories.tasks.destroy', $task->id));
     
     // Verificar que la respuesta es exitosa
     $response->assertStatus(200);

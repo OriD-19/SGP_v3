@@ -17,7 +17,6 @@ class UserSeeder extends Seeder
         $org = DB::table('organizations')->first();
 
         if (!$org) {
-            echo "Please help me";
             $org = DB::table('organizations')->insertGetId([
                 'name' => 'Test Organization',
                 'created_at' => now(),

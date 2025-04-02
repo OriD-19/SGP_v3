@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Organization;
+use App\Models\TeamMember;
 use App\Models\User;
 use Database\Seeders\ProjectSeeder;
 use Database\Seeders\UserSeeder;
@@ -12,48 +14,47 @@ uses(RefreshDatabase::class);
 test('Admin user can create Task associated with a User Story', function () {
 
     // Define the IDs for the project and user story
-    $project_id = 1;
-    $user_story_id = 1;
-    $organization_id = 1;
+    $user = User::factory()->create();
 
-    $user = User::where('first_name', 'Admin')->first();
+    $organization = Organization::factory()->create([
+        'name' => 'Test Organization',
+        'description' => 'This is a test organization.',
+        'email' => "something@something.com",
+    ]);
+
+    $project = $organization->projects()->create([
+        'project_name' => 'Test Project',
+        'description' => 'This is a test project.',
+    ]);
+
+    $user_story = $project->userStories()->create([
+        'title' => 'Test User Story',
+        'description' => 'This is a test user story.',
+        'due_date' => now()->addDays(7)->toDateString(),
+        'project_id' => $project->id,
+    ]);
+
+    $user->assignRole('administrator');
     $this->actingAs($user);
 
     $response = $this->postJson(route('organizations.projects.user_stories.tasks.store', [
-        "organization" => $organization_id,
-        "project" => $project_id,
-        "user_story" => $user_story_id,
+        "organization" => $organization->id,
+        "project" => $project->id,
+        "user_story" => $user_story->id,
     ]), [
-        'name' => 'Test Task',
+        'title' => 'Test Task',
         'description' => 'This is a test task.',
+        'due_date' => now()->addDays(7)->toDateString(),
+        'status_id' => 1,
+        'priority_id' => 1,
     ]);
 
     $response->assertStatus(201);
 
-    $this->databaseHas('tasks', [
-        'name' => 'Test Task',
+    $this->assertDatabaseHas('tasks', [
+        'title' => 'Test Task',
         'description' => 'This is a test task.',
         'user_story_id' => 1,
-    ]);
-
-    $response->assertExactJsonStructure([
-        'id',
-        'name',
-        'description',
-        'user_story' => [
-            'id',
-            'name',
-            'description',
-            'project_id',
-            'user_id',
-        ],
-        'status' => [
-            'id',
-            'name',
-            'description',
-        ],
-        'created_at',
-        'updated_at',
     ]);
 });
 

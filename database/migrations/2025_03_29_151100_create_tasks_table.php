@@ -18,7 +18,7 @@ return new class extends Migration
             $table->datetime("due_date")->nullable();
 
             $table->foreignId('status_id')->nullable()->constrained('statuses')->onDelete('cascade');
-            $table->foreignId('user_story_id')->constrained('user_stories')->onDelete('cascade');
+            $table->foreignId('user_story_id')->nullable()->constrained('user_stories')->onDelete('cascade');
             $table->timestamps();
         });
     }

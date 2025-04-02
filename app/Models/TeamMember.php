@@ -36,6 +36,6 @@ class TeamMember extends Model
     }
 
     public function tasks() {
-        return $this->hasMany(Task::class);
+        return $this->belongsToMany(Task::class);
     }
 }

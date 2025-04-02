@@ -9,7 +9,6 @@ class ProjectPolicy
 {
     public function create(User $user, Project $project)
     {
-        echo "This is a beautiful policy! The current user has roles: " . $user->roles;
         return $user->hasRole($user, 'administrator');
     }
 

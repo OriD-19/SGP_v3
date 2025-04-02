@@ -28,7 +28,7 @@ class Task extends Model
 
     public function team_members() 
     {
-        return $this->belongsToMany(User::class, 'task_user');
+        return $this->belongsToMany(TeamMember::class);
     }
 
     public function user_story()

@@ -14,7 +14,6 @@ class ProjectController extends Controller
     }
     public function store(ProjectCreateRequest $request, $organizationId)
     {
-        echo "Hello from the controller's store method";
         $validated = $request->validated();
 
         // get the organization id frmo the route
