@@ -13,41 +13,54 @@ use Illuminate\Support\Facades\DB;
 
 uses(RefreshDatabase::class);
 
-test('Test admin permissions for deleteing a User Story', function () {
-
-    // Define the IDs for the project and user story
-    $project_id = 1;
-    $user_story_id = 1;
-    $organization_id = 1;
+test('Test admin permissions for deleting a User Story', function () {
 
     // Login as the admin user
-    $user = User::where('first_name', 'Admin')->first();
+    $user = User::factory()->create([
+        'first_name' => 'Admin',
+        'last_name' => 'User',
+        'email' => 'something@somthing.com',
+        'password' => bcrypt('password'),
+        'is_admin' => true,
+    ]);
+
+    // Create the organization, project, and user story
+    $organization = Organization::factory()->create([
+        'name' => 'Test Organization',
+        'description' => 'Test Description',
+        'email' => 'something@org.com',
+    ]);
+
+    $project = Project::factory()->create([
+        'project_name' => 'Test Project',
+        'description' => 'Test Description',
+        'start_date' => now()->toDateString(),
+        'organization_id' => $organization->id,
+    ]);
+
+    $user_story = UserStory::factory()->create([
+        'title' => 'Test User Story',
+        'description' => 'Test Description',
+        'due_date' => now()->addDays(7)->toDateString(),
+        'project_id' => $project->id,
+    ]);
+
+    $user->assignRole('administrator');
     $this->actingAs($user);
-
-    $organization = Organization::where('id', $organization_id)->first();
-    $project = Project::where('id', $project_id)->first();
-    $user_story = UserStory::where('id', $user_story_id)->first();
-
-    $this->assertNotNull($organization);
-    $this->assertNotNull($project);
-    $this->assertNotNull($user_story);
-
-    $this->assertEquals($organization->id, $user->organization_id);
-    $this->assertEquals($project->id, $user_story->project_id);
 
     // Attempt to delete the user story
     $response = $this->deleteJson(route(
         'organizations.projects.user_stories.destroy',
         [
-            'organization' => $organization_id,
-            'project' => $project_id,
-            'user_story' => $user_story_id
+            'organization' => $organization->id,
+            'project' => $project->id,
+            'user_story' => $user_story->id
         ]
     ));
 
     // Assert that the user story was deleted successfully
     $this->assertDatabaseMissing('user_stories', [
-        'id' => $user_story_id,
+        'id' => $user_story->id,
     ]);
 
     $response->assertStatus(204);
@@ -56,25 +69,50 @@ test('Test admin permissions for deleteing a User Story', function () {
 
 test('Test admin permissions for deleting a User Story with invalid ID', function () {
 
-    // Define the IDs for the project and user story
-    $project_id = 1;
-    $user_story_id = 999; // Invalid user story ID
-    $organization_id = 1;
+
 
     // Login as the admin user
-    $user = User::where('first_name', 'Admin')->first();
+    $user = User::factory()->create([
+        'first_name' => 'Admin',
+        'last_name' => 'User',
+        'email' => 'something@somthing.com',
+        'password' => bcrypt('password'),
+        'is_admin' => true,
+    ]);
+
+    // Create the organization, project, and user story
+    $organization = Organization::factory()->create([
+        'name' => 'Test Organization',
+        'description' => 'Test Description',
+        'email' => 'something@org.com',
+    ]);
+
+    $project = Project::factory()->create([
+        'project_name' => 'Test Project',
+        'description' => 'Test Description',
+        'start_date' => now()->toDateString(),
+        'organization_id' => $organization->id,
+    ]);
+
+    $user_story = UserStory::factory()->create([
+        'title' => 'Test User Story',
+        'description' => 'Test Description',
+        'due_date' => now()->addDays(7)->toDateString(),
+        'project_id' => $project->id,
+    ]);
+
+    $user->assignRole('administrator');
     $this->actingAs($user);
 
     // Attempt to delete the user story
     $response = $this->deleteJson(route(
         'organizations.projects.user_stories.destroy',
         [
-            'organization' => $organization_id,
-            'project' => $project_id,
-            'user_story' => $user_story_id
+            'organization' => $organization->id,
+            'project' => $project->id,
+            'user_story' => 999 //invalid ID
         ]
     ));
 
-    // Assert that the user story was not found
     $response->assertStatus(404);
 });

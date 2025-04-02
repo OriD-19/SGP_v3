@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\UserStory;
 use Illuminate\Http\Request;
 
 class UserStoryController extends Controller
@@ -39,11 +40,12 @@ class UserStoryController extends Controller
         // Logic to update an existing user story
     }
 
-    public function destroy($id)
+    public function destroy($organizationId, $projectId, $userStoryId)
     {
+        $userStory = UserStory::findOrFail($userStoryId);
+
+        $userStory->delete();
         // Logic to delete a user story
-        return response()->json([
-            'message' => 'User story deleted successfully'
-        ], 204);
+        return response()->json(null, 204);
     }
 }

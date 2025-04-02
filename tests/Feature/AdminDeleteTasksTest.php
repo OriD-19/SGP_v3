@@ -98,5 +98,5 @@ test('Admin cannot delete a task associated with a User Story with invalid ID', 
         'task' => 999,
     ]));
 
-    $response->assertStatus(204);
+    $response->assertStatus(404);
 });

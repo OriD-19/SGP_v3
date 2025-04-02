@@ -51,7 +51,9 @@ class TaskController extends Controller
 
     public function destroy($organizationId, $projectId, $userStoryId, $taskId)
     {
-        Task::destroy($taskId);
+        $task = Task::findOrFail($taskId);
+
+        $task->delete();
         return response()->json(null, 204);
     }
 
