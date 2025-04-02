@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Role;
+use Spatie\Permission\Models\Role;
 use App\Models\TeamMember;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -11,12 +11,11 @@ test('Scrum Master can create a new Sprint with one or more User Stories', funct
     // the user stories that will be attached to the newly created sprint
     $user_stories_ids = [1, 2, 3];
 
-    $scrum_master_role = Role::where('role', 'scrum_master')->first();
+    $scrum_master_role = Role::where('name', 'scrum_master')->first();
     $scrum_master = TeamMember::factory()
     ->create([
         'user_id' => 1,
         'project_id' => 1,
-        'role_id' => $scrum_master_role->id,
     ]);
 
     $this->actingAs($scrum_master->user);

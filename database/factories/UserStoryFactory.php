@@ -20,6 +20,7 @@ class UserStoryFactory extends Factory
             'title' => $this->faker->sentence(),
             'description' => $this->faker->paragraph(),
             'due_date' => $this->faker->dateTimeBetween('now', '+1 month'),
+            'project_id' => 1,
         ];
     }
 }

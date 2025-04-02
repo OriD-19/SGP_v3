@@ -16,6 +16,8 @@ class UserFactory extends Factory
      */
     protected static ?string $password;
 
+    protected $model = \App\Models\User::class;
+
     /**
      * Define the model's default state.
      *
@@ -31,6 +33,7 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
             'is_admin' => false,
+            'organization_id' => 1,
         ];
     }
 

@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('project_name');
             $table->string('description');
             $table->date('start_date')->nullable();
-            $table->foreignId('status_id')->nullable()->constrained('statuses')->onDelete('cascade');
             $table->foreignId('organization_id')->constrained('organizations')->onDelete('cascade');
             $table->timestamps();
         });

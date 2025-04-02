@@ -2,7 +2,7 @@
 
 use App\Models\Organization;
 use App\Models\Project;
-use App\Models\Role;
+use Spatie\Permission\Models\Role;
 use App\Models\Sprint;
 use App\Models\TeamMember;
 use App\Models\User;
@@ -16,7 +16,7 @@ test('Scrum Master puede editar un sprint', function () {
     $project = Project::factory()->create(['organization_id' => $organization->id]);
 
     // Crear el rol de Scrum Master
-    $scrumMasterRole = Role::factory()->create(['role' => 'scrum_master']);
+    $scrumMasterRole = Role::factory()->create(['name' => 'scrum_master']);
 
     // Crear un usuario y asignarle el rol de Scrum Master
     $scrumMaster = User::factory()->create(['organization_id' => $organization->id]);
@@ -25,7 +25,6 @@ test('Scrum Master puede editar un sprint', function () {
     TeamMember::factory()->create([
         'user_id' => $scrumMaster->id,
         'project_id' => $project->id,
-        'role_id' => $scrumMasterRole->id,
     ]);
 
     // Crear un Sprint en el proyecto
@@ -62,7 +61,6 @@ test('Usuario sin permisos no puede editar un sprint', function () {
     TeamMember::factory()->create([
         'user_id' => $regularUser->id,
         'project_id' => $project->id,
-        'role_id' => Role::factory()->create(['role' => 'developer'])->id, // Otro rol diferente
     ]);
 
     // Crear un Sprint
@@ -93,7 +91,7 @@ test('Scrum Master puede eliminar un sprint', function () {
     $project = Project::factory()->create(['organization_id' => $organization->id]);
 
     // Crear el rol de Scrum Master
-    $scrumMasterRole = Role::factory()->create(['role' => 'scrum_master']);
+    $scrumMasterRole = Role::factory()->create(['name' => 'scrum_master']);
 
     // Crear usuario y asignarle el rol de Scrum Master
     $scrumMaster = User::factory()->create(['organization_id' => $organization->id]);
@@ -101,7 +99,6 @@ test('Scrum Master puede eliminar un sprint', function () {
     TeamMember::factory()->create([
         'user_id' => $scrumMaster->id,
         'project_id' => $project->id,
-        'role_id' => $scrumMasterRole->id,
     ]);
 
     // Crear un Sprint
@@ -138,7 +135,6 @@ test('Usuario sin permisos no puede eliminar un sprint', function () {
     TeamMember::factory()->create([
         'user_id' => $regularUser->id,
         'project_id' => $project->id,
-        'role_id' => Role::factory()->create(['role' => 'developer'])->id, // Otro rol
     ]);
 
     // Crear un Sprint
@@ -170,7 +166,7 @@ test('Scrum Master puede crear una User Story', function () {
     $project = Project::factory()->create(['organization_id' => $organization->id]);
 
     // Crear el rol de Scrum Master
-    $scrumMasterRole = Role::factory()->create(['role' => 'scrum_master']);
+    $scrumMasterRole = Role::factory()->create(['name' => 'scrum_master']);
 
     // Crear usuario y asignarle el rol de Scrum Master
     $scrumMaster = User::factory()->create(['organization_id' => $organization->id]);
@@ -178,7 +174,6 @@ test('Scrum Master puede crear una User Story', function () {
     TeamMember::factory()->create([
         'user_id' => $scrumMaster->id,
         'project_id' => $project->id,
-        'role_id' => $scrumMasterRole->id,
     ]);
 
     // Crear un Sprint
@@ -225,7 +220,6 @@ test('Usuario sin permisos no puede crear una User Story', function () {
     TeamMember::factory()->create([
         'user_id' => $regularUser->id,
         'project_id' => $project->id,
-        'role_id' => Role::factory()->create(['role' => 'developer'])->id, // Otro rol
     ]);
 
     // Crear un Sprint
@@ -267,7 +261,7 @@ test('Scrum Master puede editar una User Story', function () {
     $project = Project::factory()->create(['organization_id' => $organization->id]);
 
     // Crear el rol de Scrum Master
-    $scrumMasterRole = Role::factory()->create(['role' => 'scrum_master']);
+    $scrumMasterRole = Role::factory()->create(['name' => 'scrum_master']);
 
     // Crear usuario y asignarle el rol de Scrum Master
     $scrumMaster = User::factory()->create(['organization_id' => $organization->id]);
@@ -275,7 +269,6 @@ test('Scrum Master puede editar una User Story', function () {
     TeamMember::factory()->create([
         'user_id' => $scrumMaster->id,
         'project_id' => $project->id,
-        'role_id' => $scrumMasterRole->id,
     ]);
 
     // Crear un Sprint
@@ -321,7 +314,7 @@ test('Scrum Master puede eliminar una User Story', function () {
     $project = Project::factory()->create(['organization_id' => $organization->id]);
 
     // Crear el rol de Scrum Master
-    $scrumMasterRole = Role::factory()->create(['role' => 'scrum_master']);
+    $scrumMasterRole = Role::factory()->create(['name' => 'scrum_master']);
 
     // Crear usuario y asignarle el rol de Scrum Master
     $scrumMaster = User::factory()->create(['organization_id' => $organization->id]);
@@ -329,7 +322,6 @@ test('Scrum Master puede eliminar una User Story', function () {
     TeamMember::factory()->create([
         'user_id' => $scrumMaster->id,
         'project_id' => $project->id,
-        'role_id' => $scrumMasterRole->id,
     ]);
 
     // Crear un Sprint

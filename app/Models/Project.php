@@ -31,4 +31,9 @@ class Project extends Model
     {
         return $this->belongsTo(Organization::class);
     }
+
+    public function userStories()
+    {
+        return $this->hasMany(UserStory::class);
+    }
 }

@@ -32,7 +32,6 @@ test('A user with permissions can assign a Task to a Team Member', function () {
     $team_member = TeamMember::factory()->create([
         'user_id' => $user->id,
         'project_id' => $project->id,
-        'role_id' => 1, // Assuming 1 is the ID for a team member role
     ]);
 
     $url = "api/SGP/v1/organizations/{$organization->id}/projects/{$project->id}/user_stories/{$user_story->id}/tasks/{$task->id}/assign";

@@ -19,6 +19,7 @@ class UserStory extends Model
         'title',
         'description',
         'due_date',
+        'project_id',
     ];
 
     public function sprint()

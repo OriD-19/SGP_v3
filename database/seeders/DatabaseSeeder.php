@@ -5,16 +5,16 @@ namespace Database\Seeders;
 use App\Models\Project;
 use App\Models\Organization;
 use App\Models\Priority;
-use App\Models\Role;
 use App\Models\Sprint;
 use App\Models\Status;
 use App\Models\User;
-use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\DB;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class DatabaseSeeder extends Seeder
 {
@@ -48,19 +48,19 @@ class DatabaseSeeder extends Seeder
         //create roles
 
         $adminrole = Role::create([
-            'role' => 'administrator',
+            'name' => 'administrator',
         ]);
 
         Role::create([
-            'role' => 'scrum_master',
+            'name' => 'scrum_master',
         ]);
 
         Role::create([
-            'role' => 'product_owner',
+            'name' => 'product_owner',
         ]);
 
         Role::create([
-            'role' => 'team_member',
+            'name' => 'team_member',
         ]);
 
         Priority::create([
@@ -121,7 +121,6 @@ class DatabaseSeeder extends Seeder
             'project_name' => 'Propi',
             'description' => 'Proyecto de propi',
             'organization_id' => 1,
-            'status_id' => 1,
         ]);
 
         $sprint = Sprint::create([
@@ -143,8 +142,8 @@ class DatabaseSeeder extends Seeder
 
         DB::table('team_members')->insert([
             'user_id' => $user->id,
-            'role_id' => $adminrole->id,
             'project_id' => $project->id,
+            'organization_id' => $mainOrg->id,
         ]);
     }
 }

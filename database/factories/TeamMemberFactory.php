@@ -17,7 +17,9 @@ class TeamMemberFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'project_id' => 1,
+            'user_id' => 1,
+            'organization_id' => 1,
         ];
     }
 }

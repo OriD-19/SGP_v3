@@ -21,7 +21,6 @@ class ProjectFactory extends Factory
             'project_name' => $this->faker->sentence(3),
             'description' => $this->faker->paragraph(3),
             'organization_id' => Organization::factory(),
-            'status_id' => Status::factory(),
         ];
     }
 }

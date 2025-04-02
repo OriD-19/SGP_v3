@@ -15,7 +15,7 @@ class TeamMember extends Model
     protected $fillable = [
         'user_id',
         'project_id',
-        'role_id',
+        'organization_id',
     ];
 
     public function project()
@@ -26,11 +26,6 @@ class TeamMember extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function role()
-    {
-        return $this->belongsTo(Role::class);
     }
 
     public function tasks() {

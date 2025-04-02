@@ -10,7 +10,7 @@ test('A user with permissions can delete a User Story', function () {
 
     $organization = Organization::factory()->create();
     $project = $organization->projects()->create([
-        'name' => 'Test Project',
+        'project_name' => 'Test Project',
         'description' => 'This is a test project.',
     ]);
 
@@ -20,10 +20,11 @@ test('A user with permissions can delete a User Story', function () {
     $this->actingAs($user);
 
     $user_story = $project->userStories()->create([
-        'name' => 'Test User Story',
+        'title' => 'Test User Story',
         'description' => 'This is a test user story.',
         'project_id' => $project->id,
         'user_id' => $user->id,
+        'due_date' => now()->addDays(7),
     ]);
 
     $response = $this->deleteJson(route('organizations.projects.user_stories.destroy', [

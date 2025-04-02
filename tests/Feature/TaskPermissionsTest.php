@@ -10,7 +10,7 @@ test('A user with permissions can create a task', function () {
 
     $organization = Organization::factory()->create();
     $project = $organization->projects()->create([
-        'name' => 'Test Project',
+        'project_name' => 'Test Project',
         'description' => 'This is a test project.',
     ]);
     $user = User::factory()->create();
@@ -53,7 +53,7 @@ test('A user with permissions can update a task', function () {
 
     $organization = Organization::factory()->create();
     $project = $organization->projects()->create([
-        'name' => 'Test Project',
+        'project_name' => 'Test Project',
         'description' => 'This is a test project.',
     ]);
     $user = User::factory()->create();
@@ -102,7 +102,7 @@ test('A user with permissions can delete a task', function () {
 
     $organization = Organization::factory()->create();
     $project = $organization->projects()->create([
-        'name' => 'Test Project',
+        'project_name' => 'Test Project',
         'description' => 'This is a test project.',
     ]);
     $user = User::factory()->create();
@@ -110,7 +110,7 @@ test('A user with permissions can delete a task', function () {
     $this->actingAs($user);
 
     $user_story = $project->userStories()->create([
-        'name' => 'Test User Story',
+        'title' => 'Test User Story',
         'description' => 'This is a test user story.',
         'project_id' => $project->id,
         'user_id' => $user->id,
