@@ -31,7 +31,7 @@ Route::group(['prefix' => 'SGP/v1'], function () {
         Route::apiResource('organizations.projects.user_stories', UserStoryController::class);
 
         Route::post('organizations/{organization}/projects/{project}/user_stories/{user_story}/tasks/{task}/assign', [TaskController::class, 'assignUsers'])->name('tasks.assign');
-        Route::post('organizations/{organization}/projects/{project}/user_stories/{user_story}/tasks/{task}/changeState', [TaskController::class, 'unassignUser']);
+        Route::patch('organizations/{organization}/projects/{project}/user_stories/{user_story}/tasks/{task}/changeStatus', [TaskController::class, 'changeStatus'])->name('tasks.changeStatus');
         Route::apiResource('organizations.projects.user_stories.tasks', TaskController::class);
 
         Route::apiResource('organizations.projects.sprints', SprintController::class);

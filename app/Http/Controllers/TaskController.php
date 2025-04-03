@@ -29,7 +29,7 @@ class TaskController extends Controller
     public function store(Request $request, $organizationId, $projectId, $userStoryId)
     {
         // Logic to store a new task
-        if ($request->user()->cannot('store', Task::class, $projectId)) {
+        if ($request->user()->cannot('store', [Task::class, $projectId])) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -51,7 +51,10 @@ class TaskController extends Controller
             'due_date' => $request->input('due_date'),
         ]));
 
-        return response()->json(TaskResource::make($task), 201);
+        return response()->json([
+            'message' => 'task created successfully.',
+            'task' => TaskResource::make($task),
+        ], 201);
     }
 
     public function show($id)
@@ -61,7 +64,7 @@ class TaskController extends Controller
 
     public function update(PatchTaskRequest $request, $organizationId, $projectId, $userStoryId, $taskId)
     {
-        if ($request->user()->cannot('update', Task::class, $projectId)) {
+        if ($request->user()->cannot('update', [Task::class, $projectId])) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -73,12 +76,18 @@ class TaskController extends Controller
         $task->fill($validated);
         $task->save();
 
-        return response()->json(TaskResource::make($task), 200);
+        return response()->json(
+            [
+                'message' => 'task updated successfully.',
+                'task' => TaskResource::make($task),
+            ],
+            200
+        );
     }
 
     public function destroy(Request $request, $organizationId, $projectId, $userStoryId, $taskId)
     {
-        if($request->user()->cannot('delete', Task::class, $projectId)) {
+        if($request->user()->cannot('delete', [Task::class, $projectId])) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -108,6 +117,27 @@ class TaskController extends Controller
 
         return response()->json([
             'message' => 'users assigned to task successfully',
+        ], 200);
+    }
+
+    public function changeStatus(Request $request, $organizationId, $projectId, $userStoryId, $taskId)
+    {
+        $task = Task::findOrFail($taskId);
+
+        if ($request->user()->cannot('changeStatus', [$task, $projectId])) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $validated = $request->validate([
+            'status_id' => 'required|exists:statuses,id',
+        ]);
+
+        $task->status_id = $validated['status_id'];
+        $task->save();
+
+        return response()->json([
+            'message' => 'task status updated successfully',
+            'task' => TaskResource::make($task),
         ], 200);
     }
 }

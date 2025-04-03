@@ -1,7 +1,10 @@
 <?php
 
 use App\Models\Organization;
+use App\Models\Project;
+use App\Models\TeamMember;
 use App\Models\User;
+use App\Models\UserStory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -9,40 +12,49 @@ uses(RefreshDatabase::class);
 test('A user with permissions can create a task', function () {
 
     $organization = Organization::factory()->create();
-    $project = $organization->projects()->create([
+    $project = Project::factory()->create([
         'project_name' => 'Test Project',
         'description' => 'This is a test project.',
+        'organization_id' => $organization->id,
     ]);
-    $user = User::factory()->create();
-    $user->givePermissionTo('Create tasks');
-    $this->actingAs($user);
 
-    $user_story = $project->userStories()->create([
-        'name' => 'Test User Story',
+    $user = User::factory()->create();
+
+    $user_story = UserStory::factory()->create([
+        'title' => 'Test User Story',
         'description' => 'This is a test user story.',
         'project_id' => $project->id,
-        'user_id' => $user->id,
+        'due_date' => now()->addDays(7)->toDateString(),
     ]);
 
-    $due_date = now()->addDays(7);
+    $team_member = TeamMember::factory()->create([
+        'user_id' => $user->id,
+        'project_id' => $project->id,
+    ]);
 
+    $team_member->givePermissionTo('Create tasks');
+    $due_date = now()->addDays(7)->toDateString();
+
+    $this->actingAs($user);
     $response = $this->postJson(route('organizations.projects.user_stories.tasks.store', [
         'organization' => $organization->id,
         'project' => $project->id,
         'user_story' => $user_story->id,
     ]), [
-        'name' => 'Test Task',
+        'title' => 'Test Task',
         'description' => 'This is a test task.',
         'due_date' => $due_date,
+        'status_id' => 1, // Assuming you have a status with ID 1
+        'priority_id' => 1, // Assuming you have a priority with ID 1
     ]);
 
     $response->assertStatus(201);
-    $response->assertJson([
+    $response->assertJsonFragment([
         'message' => 'task created successfully.',
     ]);
 
     $this->assertDatabaseHas('tasks', [
-        'name' => 'Test Task',
+        'title' => 'Test Task',
         'description' => 'This is a test task.',
         'due_date' => $due_date,
         'user_story_id' => $user_story->id,
@@ -56,44 +68,49 @@ test('A user with permissions can update a task', function () {
         'project_name' => 'Test Project',
         'description' => 'This is a test project.',
     ]);
+
     $user = User::factory()->create();
-    $user->givePermissionTo('Edit tasks');
-    $this->actingAs($user);
 
     $user_story = $project->userStories()->create([
-        'name' => 'Test User Story',
+        'title' => 'Test User Story',
         'description' => 'This is a test user story.',
         'project_id' => $project->id,
         'user_id' => $user->id,
+        'due_date' => now()->addDays(7)->toDateString(),
     ]);
 
     $task = $user_story->tasks()->create([
-        'name' => 'Test Task',
+        'title' => 'Test Task',
         'description' => 'This is a test task.',
         'due_date' => now()->addDays(7),
     ]);
 
-    $new_due_date = now()->addDays(14);
+    $new_due_date = now()->addDays(14)->toDateString();
 
-    $response = $this->putJson(route('organizations.projects.user_stories.tasks.update', [
+    $team_member = TeamMember::factory()->create([
+        'user_id' => $user->id,
+        'project_id' => $project->id,
+    ]);
+
+    $team_member->givePermissionTo('Edit tasks');
+    $this->actingAs($user);
+    $response = $this->patchJson(route('organizations.projects.user_stories.tasks.update', [
         'organization' => $organization->id,
         'project' => $project->id,
         'user_story' => $user_story->id,
         'task' => $task->id,
     ]), [
-        'name' => 'Updated Task',
-        'description' => 'This is an updated task.',
+        'title' => 'Updated Task',
         'due_date' => $new_due_date,
     ]);
 
     $response->assertStatus(200);
-    $response->assertJson([
+    $response->assertJsonFragment([
         'message' => 'task updated successfully.',
     ]);
 
     $this->assertDatabaseHas('tasks', [
-        'name' => 'Updated Task',
-        'description' => 'This is an updated task.',
+        'title' => 'Updated Task',
         'due_date' => $new_due_date,
     ]);
 });
@@ -106,22 +123,28 @@ test('A user with permissions can delete a task', function () {
         'description' => 'This is a test project.',
     ]);
     $user = User::factory()->create();
-    $user->givePermissionTo('Delete tasks');
-    $this->actingAs($user);
 
     $user_story = $project->userStories()->create([
         'title' => 'Test User Story',
         'description' => 'This is a test user story.',
         'project_id' => $project->id,
         'user_id' => $user->id,
+        'due_date' => now()->addDays(7)->toDateString(),
     ]);
 
     $task = $user_story->tasks()->create([
-        'name' => 'Test Task',
+        'title' => 'Test Task',
         'description' => 'This is a test task.',
         'due_date' => now()->addDays(7),
     ]);
 
+    $team_member = TeamMember::factory()->create([
+        'user_id' => $user->id,
+        'project_id' => $project->id,
+    ]);
+
+    $team_member->givePermissionTo('Delete tasks');
+    $this->actingAs($user);
     $response = $this->deleteJson(route('organizations.projects.user_stories.tasks.destroy', [
         'organization' => $organization->id,
         'project' => $project->id,
@@ -129,10 +152,7 @@ test('A user with permissions can delete a task', function () {
         'task' => $task->id,
     ]));
 
-    $response->assertStatus(200);
-    $response->assertJson([
-        'message' => 'task deleted successfully.',
-    ]);
+    $response->assertStatus(204);
 
     $this->assertDatabaseMissing('tasks', [
         'id' => $task->id,

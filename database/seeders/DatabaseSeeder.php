@@ -170,7 +170,7 @@ class DatabaseSeeder extends Seeder
 
         $team_member->syncPermissions([
             'Change status of assigned task',
-            'Get user_stories',
+            'Get all user_stories',
             'Get team members',
             'Get tasks',
             'Get project by id',

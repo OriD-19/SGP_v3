@@ -64,7 +64,7 @@ class UserStoryPolicy
     {
         $checkRole = TeamMember::where('user_id', $user->id)
             ->where('project_id', $projectId)
-            ->firstOrFail()->can('Delete user stories');
+            ->firstOrFail()->can('Delete user_stories');
 
         return $checkRole;
     }
