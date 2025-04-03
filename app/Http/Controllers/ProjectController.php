@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProjectCreateRequest;
+use App\Http\Requests\ProjectUpdateRequest;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use Illuminate\Http\Request;
@@ -32,7 +33,7 @@ class ProjectController extends Controller
         // get the organization id frmo the route
 
         Project::create([
-            'name' => $validated['project_name'],
+            'project_name' => $validated['project_name'],
             'description' => $validated['description'],
             'start_date' => $validated['start_date'],
             'end_date' => $validated['end_date'],
@@ -44,6 +45,7 @@ class ProjectController extends Controller
         ], 201);
 
     }
+
     public function show(Request $request, $organizationId, $projectId)
     {
         $project = Project::findOrFail($projectId);
@@ -56,12 +58,40 @@ class ProjectController extends Controller
 
     }
 
-    public function update(Request $request, $organizationId, $projectId)
+    public function update(ProjectUpdateRequest $request, $organizationId, $projectId)
     {
-        // Logic to update a specific project
+
+        $validated = $request->validated();
+
+        $project = Project::findOrFail($projectId);
+
+        if (!$request->user()->can('update', $project)) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $project->fill([
+            'project_name' => $validated['project_name'],
+            'description' => $validated['description'],
+        ]);
+
+        $project->save();
+
+        return response()->json([
+            'message' => 'Project updated successfully',
+        ], 200);
+
     }
     public function destroy(Request $request, $organizationId, $projectId)
     {
-        // Logic to delete a specific project
+        if ($request->user()->cannot('delete', Project::class)) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $project = Project::findOrFail($projectId);
+        $project->delete();
+
+        return response()->json([
+            'message' => 'Project deleted successfully',
+        ], 200);
     }
 }

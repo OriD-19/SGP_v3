@@ -53,6 +53,7 @@ class ProjectPolicy
             ->where('project_id', $project->id)
             ->first()
             ->can('Edit projects');
+        return $checkRole;
     }
 
     public function delete(User $user, Project $project)
@@ -61,6 +62,7 @@ class ProjectPolicy
             ->where('project_id', $project->id)
             ->first()
             ->can('Delete projects');
+        return $checkRole;
     }
 
     public function assignMember(User $user, Project $project)

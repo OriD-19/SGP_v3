@@ -15,10 +15,10 @@ test('admin can create projects', function () {
         ->postJson(route('organizations.projects.store', [
             'organization' => 1,
         ]), [
-            'project_name' => $project->name,
+            'project_name' => $project->project_name,
             'description' => $project->description,
-            'start_date' => $project->start_date,
-            'end_date' => $project->end_date,
+            'start_date' => now()->toDateString(),
+            'end_date' => now()->addDays(30)->toDateString(),
         ])
         ->assertStatus(201);
 });
@@ -28,7 +28,7 @@ test('admin can update projects', function () {
     $project = Project::factory()->create();
 
     $updatedData = [
-        'name' => 'Updated Project Name',
+        'project_name' => 'Updated Project Name',
         'description' => 'Updated Project Description',
     ];
 
@@ -40,7 +40,7 @@ test('admin can update projects', function () {
         ->assertStatus(200);
 
     $project->refresh();
-    expect($project->name)->toBe('Updated Project Name');
+    expect($project->project_name)->toBe('Updated Project Name');
     expect($project->description)->toBe('Updated Project Description');
 });
 
