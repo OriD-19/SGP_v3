@@ -71,4 +71,13 @@ class TaskPolicy
 
         return $checkRole;
     }
+
+    public function assign(User $user, int $projectId)
+    {
+        $checkRole = TeamMember::where('user_id', $user->id)
+            ->where('project_id', $projectId)
+            ->firstOrFail()->can('Assign tasks to a team member');
+
+        return $checkRole;
+    }
 }

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AssignTaskToTeamMembersRequest;
 use App\Http\Requests\PatchTaskRequest;
 use App\Http\Resources\TaskResource;
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\TeamMember;
 use App\Models\UserStory;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
@@ -86,15 +88,26 @@ class TaskController extends Controller
         return response()->json(null, 204);
     }
 
-    public function assignUser(Request $request, $taskId, $userId)
+    public function assignUsers(AssignTaskToTeamMembersRequest $request, $organizationId, $projectId, $user_story, $taskId)
     {
         // Logic to assign a user to a task
+
+        $tm = TeamMember::where('user_id', $request->user()->id)
+            ->where('project_id', $projectId)
+            ->firstOrFail();
+
+        if ($tm->cannot('Assign tasks to a team member')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $validated = $request->validated();
+        $task = Task::findOrFail($taskId);
+
+        $task->team_members()->sync($validated['users']);
+        $task->save();
+
         return response()->json([
-            'message' => 'User assigned to task successfully',
-            'task' => [
-                'id' => $taskId,
-                'assigned_user_id' => $userId,
-            ]
+            'message' => 'users assigned to task successfully',
         ], 200);
     }
 }

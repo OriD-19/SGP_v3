@@ -1,30 +1,32 @@
 <?php
 
 use App\Models\Organization;
+use App\Models\Task;
 use App\Models\TeamMember;
 use App\Models\User;
+use App\Models\UserStory;
 
 test('A user with permissions can assign a Task to a Team Member', function () {
 
     $user = User::factory()->create();
-    $user->givePermissionTo('Assign tasks to team members');
-
-    $this->actingAs($user);
 
     $organization = Organization::factory()->create();
+
     $project = $organization->projects()->create([
-        'name' => 'Test Project',
+        'project_name' => 'Test Project',
         'description' => 'This is a test project.',
-    ]);
-    $user_story = $project->userStories()->create([
-        'name' => 'Test User Story',
-        'description' => 'This is a test user story.',
-        'project_id' => $project->id,
-        'user_id' => $user->id,
+        'organization_id' => $organization->id,
     ]);
 
-    $task = $user_story->tasks()->create([
-        'name' => 'Test Task',
+    $user_story = UserStory::factory()->create([
+        'title' => 'Test User Story',
+        'description' => 'This is a test user story.',
+        'project_id' => $project->id,
+        'due_date' => now()->addDays(7)->toDateString(),
+    ]);
+
+    $task = Task::factory()->create([
+        'title' => 'Test Task',
         'description' => 'This is a test task.',
         'user_story_id' => $user_story->id,
     ]);
@@ -34,22 +36,31 @@ test('A user with permissions can assign a Task to a Team Member', function () {
         'project_id' => $project->id,
     ]);
 
-    $url = "api/SGP/v1/organizations/{$organization->id}/projects/{$project->id}/user_stories/{$user_story->id}/tasks/{$task->id}/assign";
+    $team_member->givePermissionTo('Assign tasks to a team member');
 
-    $response = $this->postJson($url, [
-        'organization' => $organization->id,
-        'project' => $project->id,
-        'user_story' => $user_story->id,
-        'task' => $task->id,
-    ], [
-        'user_id' => $team_member->id,
+    $colleague = TeamMember::factory()->create([
+        'user_id' => User::factory()->create()->id,
+        'project_id' => $project->id,
+    ]);
+
+    $this->actingAs($user);
+    $response = $this->postJson(route(
+        'tasks.assign',
+        [
+            'organization' => $organization->id,
+            'project' => $project->id,
+            'user_story' => $user_story->id,
+            'task' => $task->id,
+        ]
+    ), [
+        'users' => [$colleague->id],
     ]);
 
     $response->assertStatus(200);
     $response->assertJson([
-        'message' => 'Task assigned successfully.',
+        'message' => 'users assigned to task successfully',
     ]);
 
     $team_member->refresh();
-    $this->assertContains($task->id(), $team_member->tasks());
+    $this->assertContains($task->id, $colleague->tasks()->pluck('id')->toArray());
 });
