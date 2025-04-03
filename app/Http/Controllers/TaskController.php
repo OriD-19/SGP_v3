@@ -14,7 +14,6 @@ class TaskController extends Controller
 {
     public function index(Request $request, $organizationId, $projectId, $userStoryId)
     {
-
         if ($request->user()->cannot('viewAny', [Task::class, $projectId])) {
             abort(403, 'Unauthorized action.');
         }

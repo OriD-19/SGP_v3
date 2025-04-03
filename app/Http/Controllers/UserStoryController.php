@@ -21,6 +21,7 @@ class UserStoryController extends Controller
 
         return UserStoryResource::collection($userStories);
     }
+
     public function show($id)
     {
         // Logic to get a specific user story by ID
