@@ -17,7 +17,6 @@ Route::group(['prefix' => 'SGP/v1'], function () {
     // Rutas públicas
     Route::post('register', [UserController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
-    Route::post('logout', [AuthController::class, 'logout']);
 
 
     // Rutas protegidas **

@@ -55,19 +55,19 @@ class SprintPolicy
         return $checkRole;
     }
 
-    public function update(User $user, Sprint $sprint)
+    public function update(User $user, int $projectId)
     {
         $checkRole = TeamMember::where('user_id', $user->id)
-            ->where('sprint_id', $sprint->id)
+            ->where('project_id', $projectId)
             ->firstOrFail()->can('Edit sprints');
 
         return $checkRole;
     }
 
-    public function delete(User $user, Sprint $sprint)
+    public function delete(User $user, int $projectId)
     {
         $checkRole = TeamMember::where('user_id', $user->id)
-            ->where('sprint_id', $sprint->id)
+            ->where('project_id', $projectId)
             ->firstOrFail()->can('Delete sprints');
 
         return $checkRole;

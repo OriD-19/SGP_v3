@@ -46,7 +46,7 @@ class UserStoryPolicy
     {
         $checkRole = TeamMember::where('user_id', $user->id)
             ->where('project_id', $projectId)
-            ->firstOrFail()->can('Create user stories');
+            ->firstOrFail()->can('Create user_stories');
 
         return $checkRole;
     }
@@ -55,7 +55,7 @@ class UserStoryPolicy
     {
         $checkRole = TeamMember::where('user_id', $user->id)
             ->where('project_id', $projectId)
-            ->firstOrFail()->can('Edit user stories');
+            ->firstOrFail()->can('Edit user_stories');
 
         return $checkRole;
     }

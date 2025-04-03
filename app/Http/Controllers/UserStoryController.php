@@ -30,7 +30,7 @@ class UserStoryController extends Controller
     public function store(UserStoryCreateRequest $request, $organizationId, $projectId)
     {
         // Logic to create a new user story
-        if ($request->user()->cannot('create', UserStory::class)) {
+        if ($request->user()->cannot('create', [UserStory::class, $projectId])) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -50,16 +50,16 @@ class UserStoryController extends Controller
         ], 201);
     }
 
-    public function update(UserStoryUpdateRequest $request, $organizationId, $projcetId, $userStoryId)
+    public function update(UserStoryUpdateRequest $request, $organizationId, $projectId, $userStoryId)
     {
         // Logic to update an existing user story
 
-        $validated = $request->validated();
-
-        if ($request->user()->cannot('update', [UserStory::class, $userStoryId])) {
+        if ($request->user()->cannot('update', [UserStory::class, $projectId])) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
+
         $userStory = UserStory::findOrFail($userStoryId);
+        $validated = $request->validated();
 
         $userStory->fill($validated);
         $userStory->save();

@@ -62,13 +62,16 @@ class SprintController extends Controller
     {
         // Logic to retrieve and return a specific sprint
     }
+
     public function update(SprintUpdateRequest $request, $organizationId, $projectId, $sprintId)
     {
         // Check if the user has permission to update the sprint
+        echo "this is working";
         $sprint = Sprint::findOrFail($sprintId);
-        if ($request->user()->cannot('update', $sprint)) {
+        if ($request->user()->cannot('update', [Sprint::class, $projectId])) {
             abort(403, 'Unauthorized action.');
         }
+        echo "this is working";
 
         // Validate the request
         $validated = $request->validated();
@@ -88,7 +91,7 @@ class SprintController extends Controller
     {
         // Logic to delete a specific sprint
         $sprint = Sprint::findOrFail($sprintId);
-        if ($request->user()->cannot('delete', $sprint)) {
+        if ($request->user()->cannot('delete', [Sprint::class, $projectId])) {
             abort(403, 'Unauthorized action.');
         }
 
