@@ -24,7 +24,8 @@ class SprintCreateRequest extends FormRequest
         return [
             'description' => 'required|string|max:255',
             'duration' => 'required|integer|min:1',
-            'start_date' => 'required|date',
+            'user_stories' => 'array',
+            'user_stories.*' => 'exists:user_stories,id',
         ];
     }
 }

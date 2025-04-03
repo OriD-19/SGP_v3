@@ -20,6 +20,8 @@ class SprintPolicy
             return true;
         }
 
+        echo "this is false";
+
         return null;
     }
 
@@ -34,34 +36,37 @@ class SprintPolicy
 
     public function view(User $user, int $projectId)
     {
-        $checkRole = TeamMember::where('user_id', $user->user)
-            ->where('project_id', $projectId)
-            ->firstOrFail()->can('Get sprint by id');
 
-        return $checkRole;
+        $checkRole = TeamMember::where('user_id', $user->id)
+            ->where('project_id', $projectId)
+            ->firstOrFail();
+
+        return $checkRole->can('Get all sprints');
     }
 
-    public function create(TeamMember $teamMember, int $projectId)
+    public function create(User $user, int $projectId)
     {
-        $checkRole = TeamMember::where('user_id', $teamMember->user_id)
+        echo "this is the user Id: " . $user->id . "\n";
+        echo "project id is: " . $projectId . "\n";
+        $checkRole = TeamMember::where('user_id', $user->id)
             ->where('project_id', $projectId)
             ->firstOrFail()->can('Create sprints');
 
         return $checkRole;
     }
 
-    public function update(TeamMember $teamMember, Sprint $sprint)
+    public function update(User $user, Sprint $sprint)
     {
-        $checkRole = TeamMember::where('user_id', $teamMember->user_id)
+        $checkRole = TeamMember::where('user_id', $user->id)
             ->where('sprint_id', $sprint->id)
             ->firstOrFail()->can('Edit sprints');
 
         return $checkRole;
     }
 
-    public function delete(TeamMember $teamMember, Sprint $sprint)
+    public function delete(User $user, Sprint $sprint)
     {
-        $checkRole = TeamMember::where('user_id', $teamMember->user_id)
+        $checkRole = TeamMember::where('user_id', $user->id)
             ->where('sprint_id', $sprint->id)
             ->firstOrFail()->can('Delete sprints');
 

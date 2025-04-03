@@ -23,11 +23,12 @@ function createAdminUser()
 }
 
 test('admin can create sprints', function () {
-    $admin = createAdminUser();
+    $admin = User::factory()->create();
     $sprint = Sprint::factory()->make([
         'start_date' => now()->toDateString(),
     ]);
 
+    $admin->assignRole('administrator');
     $this->actingAs($admin)
         ->postJson(route('organizations.projects.sprints.store', [
             'organization' => 1,

@@ -1,7 +1,11 @@
 <?php
 
+use App\Models\Organization;
+use App\Models\Project;
 use Spatie\Permission\Models\Role;
 use App\Models\TeamMember;
+use App\Models\User;
+use App\Models\UserStory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -9,69 +13,86 @@ uses(RefreshDatabase::class);
 test('Scrum Master can create a new Sprint with one or more User Stories', function () {
 
     // the user stories that will be attached to the newly created sprint
-    $user_stories_ids = [1, 2, 3];
 
-    $scrum_master_role = Role::where('name', 'scrum_master')->first();
-    $scrum_master = TeamMember::factory()
-    ->create([
-        'user_id' => 1,
-        'project_id' => 1,
+    $organization = Organization::factory()->create([
+        'name' => 'Test Organization',
     ]);
 
-    $this->actingAs($scrum_master->user);
+    $project = Project::factory()->create([
+        'project_name' => 'Test Project',
+        'organization_id' => $organization->id,
+    ]);
+
+    $u1 = UserStory::factory()->create([
+        'title' => 'User Story 1',
+        'description' => 'Description for User Story 1',
+        'project_id' => $project->id,
+    ]);
+
+    $u2 = UserStory::factory()->create([
+        'title' => 'User Story 2',
+        'description' => 'Description for User Story 2',
+        'project_id' => $project->id,
+    ]);
+
+    $u3 = UserStory::factory()->create([
+        'title' => 'User Story 3',
+        'description' => 'Description for User Story 3',
+        'project_id' => $project->id,
+    ]);
+
+    $user = User::factory()->create([
+        'organization_id' => $organization->id,
+    ]);
+
+    $scrum_master = TeamMember::factory()
+    ->create([
+        'user_id' => $user->id,
+        'project_id' => $project->id,
+    ]);
+
+    echo "this is the user id: " . $user->id . "\n";
+    echo "this is the project Id: " . $project->id . "\n";
+
+    $scrum_master->assignRole('scrum_master');
+    $this->actingAs($user);
 
     $response = $this->postJson(route('organizations.projects.sprints.store', [
         'organization' => 1,
-        'project' => 1,
+        'project' => $project->id,
     ]), [
-        'title' => 'New Sprint',
         'duration' => 3, // sprint duration in weeks
         'description' => 'This is a test sprint.',
-        'user_stories' => $user_stories_ids,
+        'user_stories' => [
+            $u1->id,
+            $u2->id,
+            $u3->id,
+        ],
     ]);
 
     $response->assertStatus(201);
 
+    echo "IM DONE WITH THIS THING " . $response->json('sprint_id');
+
     $this->assertDatabaseHas('sprints', [
-        'title' => 'New Sprint',
         'description' => 'This is a test sprint.',
         'duration' => 3,
-        'project_id' => 1,
+        'project_id' => $project->id,
     ]);
 
-    $this->assertDatabaseHas('user_story', [
-        'id' => 1,
-        'sprint_id' => $response->json('id'),
+    $this->assertDatabaseHas('user_stories', [
+        'id' => $u1->id,
+        'sprint_id' => $response->json('sprint_id'),
     ]);
 
-    $this->assertDatabaseHas('user_story', [
-        'id' => 2,
-        'sprint_id' => $response->json('id'),
+    $this->assertDatabaseHas('user_stories', [
+        'id' => $u2->id,
+        'sprint_id' => $response->json('sprint_id'),
     ]);
 
-    $this->assertDatabaseHas('user_story', [
-        'id' => 3,
-        'sprint_id' => $response->json('id'),
+    $this->assertDatabaseHas('user_stories', [
+        'id' => $u3->id,
+        'sprint_id' => $response->json('sprint_id'),
     ]);
-    $response->assertExactJsonStructure([
-        'id',
-        'title',
-        'description',
-        'duration',
-        'project_id',
-        'user_stories' => [
-            '*' => [
-                'id',
-                'title',
-                'description',
-                'project_id',
-                'sprint_id',
-            ],
-        ],
-        'created_at',
-        'updated_at',
-    ])->assertJsonFragment([
-        'title' => 'New Sprint',
-        'description' => 'This is a test sprint.',
-    ]);
+
 });

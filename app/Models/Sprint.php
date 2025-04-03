@@ -24,7 +24,7 @@ class Sprint extends Model
 
     public function user_stories()
     {
-        return $this->hasMany(Task::class);
+        return $this->hasMany(UserStory::class);
     }
 
     public function project()

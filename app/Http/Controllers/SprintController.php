@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SprintCreateRequest;
 use App\Http\Requests\SprintUpdateRequest;
 use App\Http\Resources\SprintResource;
+use App\Models\Project;
 use App\Models\Sprint;
+use App\Models\UserStory;
 use Illuminate\Http\Request;
 
 class SprintController extends Controller
@@ -22,23 +24,40 @@ class SprintController extends Controller
 
         return SprintResource::collection($sprints);
     }
-    public function store(SprintCreateRequest $request)
+
+    public function store(SprintCreateRequest $request, $organizationId, $projectId)
     {
+        if($request->user()->cannot('create', [Sprint::class, $projectId])) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $validated = $request->validated();
 
         $sprint = Sprint::create([
             'description' => $validated['description'],
             'duration' => $validated['duration'],
-            'start_date' => $validated['start_date'],
-            'active' => false, // active by default
+            'start_date' => $validated['start_date'] ?? now()->toDateString(),
+            'project_id' => $projectId,
+            'active' => false, // inactive by default
         ]);
+
+        $project = Project::findOrFail($projectId);
+        $project->sprints()->save($sprint);
+
+        if (isset($validated['user_stories']) && is_array($validated['user_stories'])) {
+            foreach ($validated['user_stories'] as $userStoryId) {
+                $userStory = UserStory::findOrFail($userStoryId);
+                $sprint->user_stories()->save($userStory);
+            }
+        }
 
         return response()->json([
             'message' => 'Sprint created successfully',
-            'sprint' => $sprint,
+            'sprint_id' => $sprint->id,
         ], 201);
 
     }
+
     public function show($id)
     {
         // Logic to retrieve and return a specific sprint

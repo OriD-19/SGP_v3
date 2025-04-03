@@ -152,12 +152,7 @@ class DatabaseSeeder extends Seeder
 
 
         //asignar permisos
-        foreach ($permissions as $nombre_permiso) {
-            $permission = Permission::where('name', $nombre_permiso)->first();
-            if ($permission) {
-                $adminrole->givePermissionTo($permission);
-            }
-        }
+        $adminrole->syncPermissions($permissions);
 
         DB::table('team_members')->insert([
             'user_id' => $user->id,
