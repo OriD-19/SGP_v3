@@ -105,7 +105,7 @@ class TaskController extends Controller
             ->where('project_id', $projectId)
             ->firstOrFail();
 
-        if ($tm->cannot('Assign tasks to a team member')) {
+        if ($request->user()->cannot('Assign tasks to a team member') && $tm->cannot('Assign tasks to a team member')) {
             abort(403, 'Unauthorized action.');
         }
 

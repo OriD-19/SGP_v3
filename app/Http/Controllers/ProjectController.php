@@ -29,7 +29,8 @@ class ProjectController extends Controller
     public function store(ProjectCreateRequest $request, $organizationId)
     {
 
-        if ($request->user()->cannot('create', Project::class) && !$request->user()->can('create')) {
+        if ($request->user()->cannot('create', Project::class) && $request->user()->cannot('Create projects')) 
+        {
             abort(403, 'Unauthorized action.');
         }
 

@@ -8,6 +8,7 @@ use App\Models\Priority;
 use App\Models\Sprint;
 use App\Models\Status;
 use App\Models\User;
+use App\Models\UserStory;
 use Illuminate\Support\Facades\DB;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -70,6 +71,8 @@ class DatabaseSeeder extends Seeder
         $adminrole = Role::create([
             'name' => 'administrator',
         ]);
+
+
 
         $scrum_master = Role::create([
             'name' => 'scrum_master',
@@ -137,6 +140,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
 
+
         $project = Project::create([
             'project_name' => 'Propi',
             'description' => 'Proyecto de propi',
@@ -149,6 +153,47 @@ class DatabaseSeeder extends Seeder
             'start_date' => now(),
             'active' => false,
             'project_id' => 1,
+        ]);
+
+        UserStory::create([
+            'title' => 'User Story 1',
+            'description' => 'Description of User Story 1',
+            'priority_id' => 1,
+            'sprint_id' => 1,
+            'project_id' => 1,
+            'due_date' => now()->addDays(7)->toDateString(),
+        ]);
+        UserStory::create([
+            'title' => 'User Story 2',
+            'description' => 'Description of User Story 2',
+            'priority_id' => 1,
+            'sprint_id' => 1,
+            'project_id' => 1,
+            'due_date' => now()->addDays(7)->toDateString(),
+        ]);
+        UserStory::create([
+            'title' => 'User Story 3',
+            'description' => 'Description of User Story 3',
+            'priority_id' => 1,
+            'sprint_id' => 1,
+            'project_id' => 1,
+            'due_date' => now()->addDays(7)->toDateString(),
+        ]);
+        UserStory::create([
+            'title' => 'User Story 4',
+            'description' => 'Description of User Story 4',
+            'priority_id' => 1,
+            'sprint_id' => 1,
+            'project_id' => 1,
+            'due_date' => now()->addDays(7)->toDateString(),
+        ]);
+        UserStory::create([
+            'title' => 'User Story 5',
+            'description' => 'Description of User Story 5',
+            'priority_id' => 1,
+            'sprint_id' => 1,
+            'project_id' => 1,
+            'due_date' => now()->addDays(7)->toDateString(),
         ]);
 
 
@@ -168,6 +213,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'team_member',
         */
 
+        $user->assignRole($adminrole);
 
         $team_member->syncPermissions([
             'Change status of assigned task',

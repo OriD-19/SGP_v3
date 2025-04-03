@@ -26,6 +26,7 @@ class SprintCreateRequest extends FormRequest
             'duration' => 'required|integer|min:1',
             'user_stories' => 'array',
             'user_stories.*' => 'exists:user_stories,id',
+            'start_date' => 'nullable|date_format:Y-m-d',
         ];
     }
 }

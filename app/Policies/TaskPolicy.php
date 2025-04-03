@@ -46,7 +46,6 @@ class TaskPolicy
 
     public function store(User $user, int $projectId)
     {
-        echo "Hello from the policy ";
         $checkRole = TeamMember::where('user_id', $user->id)
             ->where('project_id', $projectId)
             ->firstOrFail()->can('Create tasks');
@@ -87,10 +86,8 @@ class TaskPolicy
             ->where('project_id', $projectId)
             ->firstOrFail();
 
-        echo "this works";
         $task_permission = $team_member->tasks()->where('id', $task->id)->exists();
 
-        echo "this works " . ($task_permission ? 'true' : 'false');
 
         return $team_member->can('Change status of assigned task') && $task_permission;
     }

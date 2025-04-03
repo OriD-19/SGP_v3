@@ -120,11 +120,6 @@ test('admin user can access protected resources', function () {
     ]);
 
 
-    echo route('organizations.projects.user_stories.index', [
-        'organization' => $organization->id,
-        'project' => $project->id,
-    ]);
-
     $response = $this->getJson(route('organizations.projects.user_stories.index', [
         'organization' => $organization->id,
         'project' => $project->id,

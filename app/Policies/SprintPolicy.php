@@ -20,8 +20,6 @@ class SprintPolicy
             return true;
         }
 
-        echo "this is false";
-
         return null;
     }
 
@@ -46,8 +44,6 @@ class SprintPolicy
 
     public function create(User $user, int $projectId)
     {
-        echo "this is the user Id: " . $user->id . "\n";
-        echo "project id is: " . $projectId . "\n";
         $checkRole = TeamMember::where('user_id', $user->id)
             ->where('project_id', $projectId)
             ->firstOrFail()->can('Create sprints');

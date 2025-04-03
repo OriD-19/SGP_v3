@@ -51,9 +51,6 @@ test('Scrum Master can create a new Sprint with one or more User Stories', funct
         'project_id' => $project->id,
     ]);
 
-    echo "this is the user id: " . $user->id . "\n";
-    echo "this is the project Id: " . $project->id . "\n";
-
     $scrum_master->assignRole('scrum_master');
     $this->actingAs($user);
 
@@ -71,8 +68,6 @@ test('Scrum Master can create a new Sprint with one or more User Stories', funct
     ]);
 
     $response->assertStatus(201);
-
-    echo "IM DONE WITH THIS THING " . $response->json('sprint_id');
 
     $this->assertDatabaseHas('sprints', [
         'description' => 'This is a test sprint.',
