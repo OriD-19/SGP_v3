@@ -28,6 +28,11 @@ class ProjectController extends Controller
 
     public function store(ProjectCreateRequest $request, $organizationId)
     {
+
+        if ($request->user()->cannot('create', Project::class) && !$request->user()->can('create')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $validated = $request->validated();
 
         // get the organization id frmo the route
@@ -61,13 +66,12 @@ class ProjectController extends Controller
     public function update(ProjectUpdateRequest $request, $organizationId, $projectId)
     {
 
-        $validated = $request->validated();
-
-        $project = Project::findOrFail($projectId);
-
-        if (!$request->user()->can('update', $project)) {
+        if ($request->user()->cannot('update', Project::class)) {
             abort(403, 'Unauthorized action.');
         }
+
+        $validated = $request->validated();
+        $project = Project::findOrFail($projectId);
 
         $project->fill([
             'project_name' => $validated['project_name'],
@@ -77,7 +81,7 @@ class ProjectController extends Controller
         $project->save();
 
         return response()->json([
-            'message' => 'Project updated successfully',
+            'message' => 'project updated successfully',
         ], 200);
 
     }
@@ -91,7 +95,7 @@ class ProjectController extends Controller
         $project->delete();
 
         return response()->json([
-            'message' => 'Project deleted successfully',
+            'message' => 'project deleted successfully',
         ], 200);
     }
 }

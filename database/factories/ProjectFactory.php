@@ -19,7 +19,7 @@ class ProjectFactory extends Factory
     {
         return [
             'project_name' => $this->faker->sentence(3),
-            'description' => $this->faker->paragraph(3),
+            'description' => $this->faker->paragraph(2),
             'organization_id' => Organization::factory(),
         ];
     }

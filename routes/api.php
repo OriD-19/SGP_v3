@@ -7,6 +7,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SprintController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TeamMemberController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserStoryController;
 use Illuminate\Http\Request;
@@ -25,6 +26,7 @@ Route::group(['prefix' => 'SGP/v1'], function () {
 
         Route::apiResource('organizations', OrganizationController::class);
         Route::apiResource('organizations.projects', ProjectController::class);
+        Route::apiResource('organizations.projects.team_members', TeamMemberController::class);
 
         Route::patch('organizations/{organization}/projects/{project}/user_stories/{user_story}/changePriority', [UserStoryController::class, 'changePriority']);
         Route::patch('organizations/{organization}/projects/{project}/user_stories/{user_story}/changeSprint', [UserStoryController::class, 'changeSprint']);

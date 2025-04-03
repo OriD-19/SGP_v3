@@ -31,10 +31,10 @@ class ProjectPolicy
         return $checkRole;
     }
 
-    public function view(User $user, Project $project)
+    public function view(User $user, int $projectId)
     {
         $checkRole = TeamMember::where('user_id', $user->id)
-            ->where('project_id', $project->id)
+            ->where('project_id', $projectId)
             ->first()
             ->can('Get project by id');
 
@@ -43,25 +43,20 @@ class ProjectPolicy
 
     public function create(User $user)
     {
-        return $user->hasRole('administrator');
-    }
-
-
-    public function update(User $user, Project $project)
-    {
-        $checkRole = TeamMember::where('user_id', $user->user_id)
-            ->where('project_id', $project->id)
-            ->first()
-            ->can('Edit projects');
+        $checkRole = $user->can('Create projects');
         return $checkRole;
     }
 
-    public function delete(User $user, Project $project)
+
+    public function update(User $user)
     {
-        $checkRole = TeamMember::where('user_id', $user->user_id)
-            ->where('project_id', $project->id)
-            ->first()
-            ->can('Delete projects');
+        $checkRole = $user->can('Edit projects');
+        return $checkRole;
+    }
+
+    public function delete(User $user)
+    {
+        $checkRole = $user->can('Delete projects');
         return $checkRole;
     }
 

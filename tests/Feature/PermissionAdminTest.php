@@ -122,3 +122,50 @@ test('admin can update user stories', function () {
     $this->assertEquals('Updated User Story Title', $userStory->title);
     $this->assertEquals('Updated User Story Description', $userStory->description);
 });
+
+test("admin can visualize organizations", function () {
+    $admin = createAdminUser();
+    $this->actingAs($admin)
+        ->getJson(route('organizations.index'))
+        ->assertStatus(200);
+});
+
+test("admin can visualize projects", function () {
+    $admin = createAdminUser();
+    $this->actingAs($admin)
+        ->getJson(route('organizations.projects.index', [
+            'organization' => 1,
+        ]))
+        ->assertStatus(200);
+});
+
+test("admin can visualize sprints", function () {
+    $admin = createAdminUser();
+    $this->actingAs($admin)
+        ->getJson(route('organizations.projects.sprints.index', [
+            'organization' => 1,
+            'project' => 1,
+        ]))
+        ->assertStatus(200);
+});
+
+test("admin can visualize user stories", function () {
+    $admin = createAdminUser();
+    $this->actingAs($admin)
+        ->getJson(route('organizations.projects.user_stories.index', [
+            'organization' => 1,
+            'project' => 1,
+        ]))
+        ->assertStatus(200);
+});
+
+test("admin can visualize tasks", function () {
+    $admin = createAdminUser();
+    $this->actingAs($admin)
+        ->getJson(route('organizations.projects.user_stories.tasks.index', [
+            'organization' => 1,
+            'project' => 1,
+            'user_story' => 1,
+        ]))
+        ->assertStatus(200);
+});

@@ -42,6 +42,7 @@ class DatabaseSeeder extends Seeder
             'Assign team members in project',
             'Assign roles in project',
             'Edit team member in project',
+            'Delete team member in project',
             'Edit roles in project',
             'Assign tasks to a team member',
             'Get user_stories',
